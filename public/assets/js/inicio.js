@@ -1,135 +1,184 @@
-// Página inicial (apresentação): destaques da semana, tipos de vela e movimento
-import { cardProduto, efeitos, revelar, ligarWpp, ligarInsta, mostrarAviso, esc, fotoUrl, ilustracao } from './comum.js';
+// Página inicial: apresentação da marca, coleções, destaques, momentos e galeria
+import {
+  montarCasca, aplicarAjustes, registrarProdutos, cardProduto, velaArte, fotoUrl, esc, slug, ic, revelar, ligarCarrossel,
+} from './comum.js';
 
-const carrossel = document.getElementById('carrossel');
+montarCasca();
 const reduzir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hero = document.getElementById('hero');
 
-efeitos();
-ligarWpp();
-document.documentElement.classList.add('js');
+/* ---------- Topo: título, brasas e parallax ---------- */
 
-/* ---------- Movimento do topo ---------- */
+requestAnimationFrame(() => setTimeout(() => hero.classList.add('pronto'), 80));
 
-// Título entra palavra por palavra
-requestAnimationFrame(() => document.querySelector('.titulo-anima')?.classList.add('is-pronto'));
+if (!reduzir) {
+  const brasas = document.getElementById('brasas');
+  brasas.innerHTML = Array.from({ length: 16 }, () => {
+    const esq = 15 + Math.random() * 70;
+    const dur = 7 + Math.random() * 9;
+    const atraso = -Math.random() * dur;
+    const x = (Math.random() * 120 - 60).toFixed(0);
+    const t = (2 + Math.random() * 2.5).toFixed(1);
+    return `<i style="left:${esq}%;width:${t}px;height:${t}px;animation-duration:${dur}s;animation-delay:${atraso}s;--x:${x}px"></i>`;
+  }).join('');
 
-// Vela com leve parallax ao rolar e brilho que segue o dedo/mouse
-const vela = document.getElementById('hero-vela');
-const hero = document.querySelector('.hero');
-if (!reduzir && vela && hero) {
-  let alvoY = 0, atualY = 0, rodando = false;
+  let alvo = 0, atual = 0, rodando = false;
+  const camadas = () => [document.getElementById('hero-arte'), document.querySelector('#hero-midia img')].filter(Boolean);
   const passo = () => {
-    atualY += (alvoY - atualY) * 0.12;
-    vela.style.transform = `translate3d(0, ${atualY.toFixed(2)}px, 0)`;
-    if (Math.abs(alvoY - atualY) > 0.1) requestAnimationFrame(passo); else rodando = false;
+    atual += (alvo - atual) * 0.1;
+    camadas().forEach((el) => { el.style.transform = `translate3d(0, ${(atual * 0.35).toFixed(1)}px, 0)${el.tagName === 'IMG' ? ' scale(1.06)' : ''}`; });
+    if (Math.abs(alvo - atual) > 0.2) requestAnimationFrame(passo); else rodando = false;
   };
   addEventListener('scroll', () => {
-    if (scrollY > innerHeight * 1.2) return;
-    alvoY = scrollY * -0.12;
+    if (scrollY > innerHeight * 1.3) return;
+    alvo = scrollY;
     if (!rodando) { rodando = true; requestAnimationFrame(passo); }
   }, { passive: true });
-
-  hero.addEventListener('pointermove', (e) => {
-    const r = hero.getBoundingClientRect();
-    hero.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
-    hero.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
-  });
 }
 
-/* ---------- Letreiro (faixa que corre) ---------- */
+/* ---------- Seções montadas com os dados da loja ---------- */
 
-function montarLetreiro(nomes) {
-  const trilho = document.getElementById('letreiro');
-  if (!trilho) return;
-  const itens = [...new Set([...nomes, 'Feitas à mão em Sinop', 'Aromas que acolhem'])];
-  const grupo = itens.map((n) => `<span>${esc(n)}</span>`).join('');
-  // duas cópias para o loop ficar contínuo
-  trilho.innerHTML = grupo + grupo;
+const ICONE_CAT = (nome) => {
+  const n = nome.toLowerCase();
+  if (n.includes('gruta')) return 'gruta';
+  if (n.includes('lembr')) return 'mini';
+  if (n.includes('kit') || n.includes('present')) return 'presente';
+  if (n.includes('pote')) return 'pote';
+  return 'chama';
+};
+
+const DESCRICAO_MOMENTO = {
+  presente: 'Para surpreender quem você ama',
+  relaxar: 'Aromas para desacelerar no fim do dia',
+  decoracao: 'Luz e perfume para a sua casa',
+  lembrancinha: 'Para festas, eventos e agradecimentos',
+  casamento: 'Delicadeza para o grande dia',
+  aniversario: 'Para celebrar mais um ano',
+  'cha-de-bebe': 'Lembranças doces para a chegada',
+  religioso: 'Para a fé e a devoção',
+  natal: 'Para iluminar as festas',
+  'dia-das-maes': 'Um carinho para ela',
+  'datas-especiais': 'Para os dias que merecem mais',
+  corporativo: 'Presentes para clientes e equipes',
+};
+
+function hero_(settings) {
+  if (settings.hero_image) {
+    const midia = document.getElementById('hero-midia');
+    midia.innerHTML = `<img src="${fotoUrl(settings.hero_image)}" alt="" fetchpriority="high">`;
+    midia.hidden = false;
+    hero.classList.add('hero--foto');
+    document.getElementById('hero-arte').hidden = true;
+  } else {
+    document.getElementById('hero-arte').innerHTML = velaArte('hero', { fundo: false });
+  }
 }
 
-/* ---------- Destaques da semana ---------- */
+function colecoes(categorias, produtos) {
+  const lista = categorias
+    .map((c) => ({ ...c, itens: produtos.filter((p) => p.category_slug === c.slug) }))
+    .filter((c) => c.itens.length);
+  const ul = document.getElementById('colecoes-lista');
+  ul.innerHTML = lista.map((c, i) => `
+    <li class="reveal" style="--d:${i * 0.06}s">
+      <a href="/catalogo?categoria=${encodeURIComponent(c.slug)}">
+        ${ic(ICONE_CAT(c.name), 'colecoes__icone')}
+        <div><span class="num">0${i + 1}</span><h3>${esc(c.name)}</h3><small>${c.itens.length} ${c.itens.length === 1 ? 'opção' : 'opções'}</small></div>
+        <span class="circ-seta">${ic('seta', '')}</span>
+      </a>
+    </li>`).join('');
+  document.getElementById('colecoes').hidden = !lista.length;
 
-function setasCarrossel() {
-  const ant = document.getElementById('dest-ant');
-  const prox = document.getElementById('dest-prox');
-  const passo = () => {
-    const card = carrossel.querySelector('.card, .card-wrap');
-    return card ? card.getBoundingClientRect().width + 20 : 300;
-  };
-  const atualizar = () => {
-    ant.disabled = carrossel.scrollLeft < 8;
-    prox.disabled = carrossel.scrollLeft + carrossel.clientWidth > carrossel.scrollWidth - 8;
-  };
-  ant.addEventListener('click', () => carrossel.scrollBy({ left: -passo(), behavior: 'smooth' }));
-  prox.addEventListener('click', () => carrossel.scrollBy({ left: passo(), behavior: 'smooth' }));
-  carrossel.addEventListener('scroll', atualizar, { passive: true });
-  addEventListener('resize', atualizar);
-  atualizar();
+  // Vitrine com imagem
+  if (lista.length >= 2) {
+    document.getElementById('vitrine').hidden = false;
+    document.getElementById('vitrine-grade').innerHTML = lista.slice(0, 5).map((c, i) => {
+      const comFoto = c.itens.find((p) => p.images.length);
+      return `<a class="reveal" style="--d:${i * 0.07}s" href="/catalogo?categoria=${encodeURIComponent(c.slug)}">
+        ${comFoto ? `<img src="${fotoUrl(comFoto.images[0])}" alt="" loading="lazy">` : velaArte(c.slug + i)}
+        <div class="vitrine__texto"><div><small>${c.itens.length} ${c.itens.length === 1 ? 'opção' : 'opções'}</small><h3>${esc(c.name)}</h3></div><span class="circ-seta">${ic('seta', '')}</span></div>
+      </a>`;
+    }).join('');
+  }
 }
 
-function renderDestaques(produtos, settings) {
-  document.getElementById('dest-titulo').textContent = settings.home_title || 'Destaques da semana';
+function essencia(settings) {
+  const caixa = document.getElementById('essencia-foto');
+  caixa.insertAdjacentHTML('afterbegin', settings.about_image
+    ? `<img src="${fotoUrl(settings.about_image)}" alt="Ateliê da Sonhos em Velas" loading="lazy">`
+    : velaArte('essencia'));
+  if (settings.about) document.getElementById('sobre-texto').textContent = settings.about;
+}
+
+function destaques(produtos, settings) {
+  const titulo = settings.home_title || 'Destaques da semana';
+  const partes = titulo.split(' ');
+  const corte = partes.length <= 3 ? 1 : Math.ceil(partes.length / 2);
+  document.getElementById('dest-titulo').innerHTML = `${esc(partes.slice(0, corte).join(' '))}<br><em>${esc(partes.slice(corte).join(' ') || '')}</em>`;
   const sub = document.getElementById('dest-sub');
   sub.textContent = settings.home_subtitle || '';
   sub.hidden = !settings.home_subtitle;
 
   let lista = produtos.filter((p) => p.featured).sort((a, b) => a.featured_position - b.featured_position);
-  // Se ela ainda não escolheu nenhum, mostra os primeiros do catálogo
-  if (!lista.length) lista = produtos.slice(0, 6);
-  if (!lista.length) {
-    document.getElementById('destaques').hidden = true;
-    return;
+  if (!lista.length) lista = produtos.slice(0, 8);
+  const trilho = document.getElementById('carrossel');
+  if (!lista.length) { document.getElementById('destaques').hidden = true; return; }
+  trilho.innerHTML = lista.map((p, i) => cardProduto(p, i)).join('');
+  ligarCarrossel(trilho, document.getElementById('dest-ant'), document.getElementById('dest-prox'));
+}
+
+function momentos(produtos) {
+  const contagem = new Map();
+  for (const p of produtos) for (const o of p.occasions || []) {
+    const k = slug(o);
+    const atual = contagem.get(k) || { nome: o, total: 0 };
+    atual.total += 1;
+    contagem.set(k, atual);
   }
-  carrossel.innerHTML = lista.map((p, i) => cardProduto(p, i)).join('');
-  carrossel.classList.toggle('carrossel--poucos', lista.length <= 3);
-  setasCarrossel();
+  let lista = [...contagem.entries()].sort((a, b) => b[1].total - a[1].total).slice(0, 8);
+  const ul = document.getElementById('momentos-lista');
+  if (!lista.length) {
+    lista = [['presente', { nome: 'Presentear' }], ['decoracao', { nome: 'Decorar' }], ['relaxar', { nome: 'Relaxar' }], ['lembrancinha', { nome: 'Lembrancinhas' }]];
+  }
+  ul.innerHTML = lista.map(([k, m], i) => {
+    const [primeira, ...resto] = m.nome.split(' ');
+    return `<li class="reveal" style="--d:${(i % 2) * 0.06}s">
+      <a href="/catalogo${m.total ? `?momento=${encodeURIComponent(k)}` : ''}">
+        <span class="num">0${i + 1}</span>
+        <div><h3>${esc(primeira)}${resto.length ? ` <em>${esc(resto.join(' '))}</em>` : ''}</h3><small>${esc(DESCRICAO_MOMENTO[k] || (m.total ? `${m.total} ${m.total === 1 ? 'opção' : 'opções'}` : 'Ver velas'))}</small></div>
+        <span class="circ-seta">${ic('seta', '')}</span>
+      </a>
+    </li>`;
+  }).join('');
 }
 
-/* ---------- Tipos de vela ---------- */
-
-function renderTipos(categorias, produtos) {
-  const tipos = categorias
-    .map((c) => {
-      const itens = produtos.filter((p) => p.category_slug === c.slug);
-      const comFoto = itens.find((p) => p.images.length);
-      return { ...c, total: itens.length, foto: comFoto?.images[0], seed: itens[0]?.slug || c.slug };
-    })
-    .filter((c) => c.total > 0);
-  if (!tipos.length) return;
-
-  document.getElementById('tipos').hidden = false;
-  document.getElementById('tipos-grade').innerHTML = tipos.map((c, i) => `
-    <a class="tipo reveal" href="/catalogo?categoria=${encodeURIComponent(c.slug)}" style="--d:${i * 70}ms">
-      <div class="tipo__foto">
-        ${c.foto ? `<img src="${fotoUrl(c.foto)}" alt="" loading="lazy" decoding="async">` : ilustracao(c.seed).replace(/<text[\s\S]*?<\/text>/, '')}
-      </div>
-      <div class="tipo__texto">
-        <h3>${esc(c.name)}</h3>
-        <span>${c.total} ${c.total === 1 ? 'opção' : 'opções'} <i aria-hidden="true">→</i></span>
-      </div>
-    </a>`).join('');
-  revelar(document.getElementById('tipos'));
+function galeria(settings) {
+  const fotos = settings.gallery || [];
+  if (!fotos.length) return;
+  document.getElementById('galeria').hidden = false;
+  document.getElementById('galeria-trilho').innerHTML = fotos
+    .map((k, i) => `<figure class="reveal" style="--d:${Math.min(i, 4) * 0.06}s"><img src="${fotoUrl(k)}" alt="" loading="lazy"><figcaption>0${i + 1}</figcaption></figure>`)
+    .join('');
 }
-
-/* ---------- Carregar ---------- */
 
 async function carregar() {
   try {
     const r = await fetch('/api/catalogo');
     if (!r.ok) throw new Error(r.status);
-    const { settings = {}, categorias, produtos } = await r.json();
-    ligarWpp(settings.whatsapp);
-    ligarInsta(settings.instagram);
-    mostrarAviso(settings.announcement);
-    const sobre = document.getElementById('sobre-texto');
-    if (sobre) sobre.textContent = settings.about || '';
-    const comProdutos = categorias.filter((c) => produtos.some((p) => p.category_slug === c.slug));
-    if (comProdutos.length) montarLetreiro(comProdutos.map((c) => c.name));
-    renderDestaques(produtos, settings);
-    renderTipos(categorias, produtos);
+    const { settings = {}, categorias = [], produtos = [] } = await r.json();
+    aplicarAjustes(settings);
+    registrarProdutos(produtos);
+    hero_(settings);
+    colecoes(categorias, produtos);
+    essencia(settings);
+    destaques(produtos, settings);
+    momentos(produtos);
+    galeria(settings);
   } catch {
-    carrossel.innerHTML = '<p class="vazio">Não foi possível carregar os destaques agora. <a href="/catalogo">Ver catálogo</a></p>';
+    document.getElementById('hero-arte').innerHTML = velaArte('hero', { fundo: false });
+    document.getElementById('carrossel').innerHTML = '<p class="lead">Não foi possível carregar os produtos agora. <a href="/catalogo">Ver catálogo</a></p>';
   }
+  revelar();
 }
 
 carregar();

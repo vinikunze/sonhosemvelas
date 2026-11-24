@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Catálogo | Sonhos em Velas</title>
-  <meta name="description" content="Catálogo completo da Sonhos em Velas: velas gruta, lembrancinhas, velas em pote e kits para presente. Peça pelo WhatsApp. Sinop, MT.">
-  <meta name="theme-color" content="#FBF7F4">
+  <meta name="description" content="Catálogo da Sonhos em Velas: velas em pote, velas gruta, lembrancinhas e kits para presente. Monte sua sacola e finalize pelo WhatsApp. Sinop, MT.">
+  <meta name="theme-color" content="#0E0A0C">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Catálogo Sonhos em Velas">
   <meta property="og:description" content="Velas gruta, lembrancinhas, velas em pote e kits para presente. Veja os preços e peça pelo WhatsApp.">
@@ -16,7 +16,7 @@
   <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Manrope:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="/assets/css/site.css">
   <link rel="preload" as="fetch" href="/api/catalogo" crossorigin>
 </head>
@@ -24,120 +24,126 @@
   <a class="skip" href="#produtos">Pular para os produtos</a>
   <div class="aviso" id="aviso" hidden></div>
 
-  <header class="topo is-rolado" id="topo">
+  <header class="topo" id="topo">
     <div class="topo__inner">
-      <a class="marca" href="/" aria-label="Sonhos em Velas, página inicial">
-        <img src="/assets/img/logo.png" alt="" width="44" height="44">
-        <span>Sonhos em Velas</span>
-      </a>
-      <nav class="menu" aria-label="Principal">
+      <a class="marca" href="/" aria-label="Sonhos em Velas, início"><img src="/assets/img/logo.png" alt="" width="44" height="44"><span>Sonhos em Velas</span></a>
+      <nav class="nav" aria-label="Principal">
         <a href="/">Início</a>
         <a href="/catalogo" aria-current="page">Catálogo</a>
-        <a href="/#como-pedir">Como pedir</a>
-        <a href="/#sobre">Sobre</a>
+        <a href="/#momentos">Momentos</a>
+        <a href="/#contato">Contato</a>
       </nav>
-      <a class="btn btn--sm btn--wpp js-wpp" href="#" data-msg="Olá! Vim pelo catálogo da Sonhos em Velas.">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wpp"/></svg>
-        <span>WhatsApp</span>
-      </a>
+      <div class="topo__acoes">
+        <button type="button" class="btn-icone" data-abrir-sacola aria-label="Abrir sacola"><svg class="ic"><use href="#i-sacola"/></svg><span class="contador">0</span></button>
+        <button type="button" class="btn-menu" data-abrir-menu aria-label="Abrir menu">MENU <i></i></button>
+      </div>
     </div>
   </header>
 
   <div class="adm-barra" id="adm-barra" hidden>
-    <span><strong>Modo administradora</strong> · toque em "Editar" em qualquer produto</span>
-    <div class="adm-barra__acoes">
-      <a class="adm-barra__btn" href="/admin#novo">+ Novo produto</a>
-      <a class="adm-barra__btn adm-barra__btn--claro" href="/admin">Abrir painel</a>
-    </div>
+    <span>Modo administradora: toque em "Editar" em qualquer vela</span>
+    <div><a href="/admin#novo">+ Nova vela</a><a href="/admin">Painel</a></div>
   </div>
 
   <main>
-    <section class="cat-cab" aria-labelledby="cat-titulo">
-      <div class="cat-cab__fundo" aria-hidden="true"></div>
-      <div class="cat-cab__inner">
-        <p class="sobretitulo reveal">Sonhos em Velas · Sinop, MT</p>
-        <h1 id="cat-titulo" class="reveal">Catálogo</h1>
-        <p class="cat-cab__sub reveal" id="cat-resumo">Velas aromáticas artesanais, feitas à mão.</p>
-        <div class="cat-cab__acoes reveal">
-          <a class="btn btn--wpp" id="enviar-wpp" href="#" target="_blank" rel="noopener">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wpp"/></svg>Enviar no WhatsApp
-          </a>
-          <button class="btn btn--fantasma" type="button" id="baixar-pdf">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-pdf"/></svg>Baixar PDF
-          </button>
-          <button class="btn btn--fantasma" type="button" id="compartilhar">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-link"/></svg>Copiar link
-          </button>
-        </div>
+    <section class="loja-cab" aria-labelledby="cat-titulo">
+      <span class="rotulo">Catálogo · Sinop, MT</span>
+      <h1 id="cat-titulo">Nossas <em>velas</em></h1>
+      <p class="loja-cab__sub" id="cat-resumo">Velas aromáticas feitas à mão. Monte sua sacola e finalize pelo WhatsApp.</p>
+      <div class="compartilhar">
+        <a class="chip-acao chip-acao--wpp" id="enviar-wpp" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-wpp"/></svg>Enviar catálogo</a>
+        <button class="chip-acao" type="button" id="baixar-pdf"><svg class="ic"><use href="#i-pdf"/></svg>PDF</button>
+        <button class="chip-acao" type="button" id="copiar-link"><svg class="ic"><use href="#i-link"/></svg>Copiar link</button>
       </div>
     </section>
 
-    <div class="cat-filtros" id="filtros">
-      <div class="cat-filtros__inner">
-        <label class="busca">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-          <input type="search" id="busca" placeholder="Buscar vela ou aroma" autocomplete="off" aria-label="Buscar produtos">
-        </label>
-        <label class="ordem">
-          <span class="sr-only">Ordenar</span>
-          <select id="ordem" aria-label="Ordenar produtos">
-            <option value="">Ordenar</option>
-            <option value="promo">Promoções primeiro</option>
-            <option value="menor">Menor preço</option>
-            <option value="maior">Maior preço</option>
-            <option value="nome">Nome (A a Z)</option>
-          </select>
-        </label>
-        <div class="chips" id="chips" role="tablist" aria-label="Categorias"></div>
+    <div class="abas-loja" id="abas">
+      <div class="abas-loja__inner">
+        <div class="abas-loja__trilho" id="abas-trilho" role="tablist" aria-label="Coleções"></div>
+        <button type="button" class="btn-filtro" id="abrir-filtros" aria-haspopup="dialog"><svg class="ic"><use href="#i-filtro"/></svg><span>Filtrar</span><b id="filtros-n" hidden></b></button>
       </div>
     </div>
 
-    <section class="cat-produtos" id="produtos" aria-live="polite">
-      <div class="grade">
-        <div class="card card--esqueleto"></div><div class="card card--esqueleto"></div><div class="card card--esqueleto"></div><div class="card card--esqueleto"></div>
+    <section class="loja" id="produtos" aria-live="polite">
+      <div class="loja__barra">
+        <span class="loja__total" id="total"></span>
+        <div class="filtros-ativos" id="filtros-ativos"></div>
+      </div>
+      <div class="grade-loja" id="grade">
+        <div class="esqueleto"></div><div class="esqueleto"></div><div class="esqueleto"></div><div class="esqueleto"></div>
+      </div>
+      <div class="loja-vazia" id="vazio" hidden>
+        <h2>Nenhuma vela encontrada</h2>
+        <p>Tente outro filtro ou fale com a gente: fazemos sob encomenda.</p>
+        <button type="button" class="btn btn--linha" id="limpar-tudo">Limpar filtros</button>
       </div>
     </section>
-    <p class="vazio" id="vazio" hidden>Nenhum produto encontrado. Tente outra busca ou <a href="#" class="js-wpp" data-msg="Olá! Não encontrei o que procurava no catálogo, vocês fazem sob encomenda?">fale com a gente</a>.</p>
 
-    <section class="cat-rodape-cta reveal">
-      <h2>Não achou o que queria?</h2>
-      <p>Fazemos velas personalizadas para lembrancinhas, casamentos, aniversários e datas especiais.</p>
-      <a class="btn js-wpp" href="#" data-msg="Olá! Vi o catálogo e gostaria de uma vela personalizada.">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wpp"/></svg>Pedir uma personalizada
-      </a>
+    <section class="cta-loja">
+      <div class="cta-loja__caixa reveal">
+        <span class="rotulo rotulo--centro">Sob encomenda</span>
+        <h2>Não achou a vela <em>dos seus sonhos?</em></h2>
+        <p>Criamos velas personalizadas para lembrancinhas, casamentos, aniversários e presentes. Conta pra gente o que você imaginou.</p>
+        <a class="btn js-wpp" href="#" data-msg="Olá! Vi o catálogo e gostaria de uma vela personalizada.">Pedir personalizada <svg class="ic seta"><use href="#i-seta"/></svg></a>
+      </div>
     </section>
   </main>
 
   <footer class="rodape">
-    <div class="rodape__inner">
-      <a class="marca" href="/"><img src="/assets/img/logo.png" alt="" width="36" height="36" loading="lazy"><span>Sonhos em Velas</span></a>
-      <p>Velas aromáticas artesanais · Sinop, MT</p>
-      <p class="rodape__links">
-        <a href="/">Início</a>
-        <a href="#" class="js-wpp" data-msg="Olá! Vim pelo catálogo da Sonhos em Velas.">WhatsApp</a>
-        <a href="https://www.instagram.com/sonhosemvelas_/" target="_blank" rel="noopener" class="js-insta">Instagram</a>
-      </p>
-      <p class="rodape__copy">© <span id="ano"></span> Sonhos em Velas · <a class="rodape__adm" href="/admin" rel="nofollow">Área da loja</a></p>
-    </div>
+    <a class="rodape__marca" href="/"><img src="/assets/img/logo.png" alt="" width="88" height="88" loading="lazy"><span>Sonhos em Velas</span></a>
+    <p class="rodape__frase">Velas artesanais · Aromas · Presentes</p>
+    <nav class="rodape__links" aria-label="Rodapé">
+      <a href="/">Início</a><a href="/#momentos">Momentos</a>
+      <a class="js-wpp" href="#" data-msg="Olá! Vim pelo catálogo da Sonhos em Velas.">WhatsApp</a><a class="js-insta" href="https://www.instagram.com/sonhosemvelas_/" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <p class="rodape__fim">© <span id="ano"></span> Sonhos em Velas · Sinop, MT · <a href="/admin" rel="nofollow">Área da loja</a></p>
   </footer>
 
-  <a class="wpp-flutuante js-wpp" href="#" data-msg="Olá! Vim pelo catálogo da Sonhos em Velas." aria-label="Falar no WhatsApp">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wpp"/></svg>
-  </a>
+  <!-- Filtros -->
+  <aside class="folha" id="folha-filtros" role="dialog" aria-modal="true" aria-labelledby="filtros-titulo">
+    <div class="folha__cab">
+      <h2 id="filtros-titulo">Filtrar</h2>
+      <button type="button" class="btn-icone" data-fechar-folha aria-label="Fechar filtros"><svg class="ic"><use href="#i-fechar"/></svg></button>
+    </div>
+    <div class="folha__corpo">
+      <div class="grupo-filtro">
+        <h3>Buscar</h3>
+        <label class="busca-loja"><svg class="ic"><use href="#i-busca"/></svg><input type="search" id="busca" placeholder="Nome, aroma ou tamanho" autocomplete="off" aria-label="Buscar velas"></label>
+      </div>
+      <div class="grupo-filtro" id="grupo-momentos">
+        <h3>Para que momento</h3>
+        <div class="pilulas" id="pilulas-momento"></div>
+      </div>
+      <div class="grupo-filtro">
+        <h3>Ordenar por</h3>
+        <div class="pilulas" id="pilulas-ordem">
+          <button type="button" class="pilula" data-ordem="" aria-pressed="true">Sugeridos</button>
+          <button type="button" class="pilula" data-ordem="menor" aria-pressed="false">Menor preço</button>
+          <button type="button" class="pilula" data-ordem="maior" aria-pressed="false">Maior preço</button>
+          <button type="button" class="pilula" data-ordem="promo" aria-pressed="false">Maiores descontos</button>
+          <button type="button" class="pilula" data-ordem="nome" aria-pressed="false">A a Z</button>
+        </div>
+      </div>
+      <div class="grupo-filtro">
+        <h3>Mostrar</h3>
+        <div class="pilulas">
+          <button type="button" class="pilula" id="so-promo" aria-pressed="false">Só promoções</button>
+          <button type="button" class="pilula" id="so-disponivel" aria-pressed="false">Só disponíveis</button>
+        </div>
+      </div>
+    </div>
+    <div class="folha__rodape">
+      <button type="button" class="btn btn--linha" id="limpar-filtros">Limpar</button>
+      <button type="button" class="btn" id="aplicar-filtros">Ver velas</button>
+    </div>
+  </aside>
 
   <div class="pdf-progresso" id="pdf-progresso" hidden role="status" aria-live="polite">
     <div class="pdf-progresso__caixa">
-      <div class="pdf-progresso__vela" aria-hidden="true"></div>
       <p id="pdf-texto">Preparando o PDF...</p>
       <div class="pdf-progresso__barra"><span id="pdf-barra"></span></div>
     </div>
   </div>
-
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <symbol id="i-wpp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.23 8.25c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48a.92.92 0 0 0-.66.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28Z"/></symbol>
-    <symbol id="i-pdf" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></symbol>
-    <symbol id="i-link" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
-  </svg>
 
   <script type="module" src="/assets/js/catalogo.js"></script>
 </body>

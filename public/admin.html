@@ -107,6 +107,25 @@
             <select id="add-destaque"></select>
           </label>
         </div>
+        <div class="cartao">
+          <h2 class="form__titulo">Fotos do site</h2>
+          <p class="aba__info" style="margin:-6px 0 14px">Fotos bonitas deixam o site com cara de loja. Use fotos na horizontal ou em pé, com boa luz.</p>
+          <div class="midia" data-midia="hero_image">
+            <div class="midia__foto"></div>
+            <div><strong>Capa do site</strong><small>A primeira coisa que a cliente vê. Ideal: vela acesa, ambiente aconchegante.</small>
+              <div class="midia__acoes"><button type="button" class="btn btn--sm" data-trocar>Escolher foto</button><button type="button" class="btn btn--sm btn--perigo" data-tirar hidden>Tirar</button></div></div>
+          </div>
+          <div class="midia" data-midia="about_image">
+            <div class="midia__foto"></div>
+            <div><strong>Foto da seção "Nossa essência"</strong><small>Ex.: as mãos fazendo a vela, o ateliê, a dona da loja.</small>
+              <div class="midia__acoes"><button type="button" class="btn btn--sm" data-trocar>Escolher foto</button><button type="button" class="btn btn--sm btn--perigo" data-tirar hidden>Tirar</button></div></div>
+          </div>
+          <h3 class="bloco__titulo" style="margin-top:18px">Galeria "Por dentro do ateliê"</h3>
+          <ul class="fotos" id="galeria-fotos"></ul>
+          <small class="aba__info">Até 16 fotos. A seção só aparece no site quando tiver fotos.</small>
+          <input type="file" id="input-midia" accept="image/*" hidden>
+          <input type="file" id="input-galeria" accept="image/*" multiple hidden>
+        </div>
       </section>
 
       <!-- Ajustes -->
@@ -171,7 +190,7 @@
       </button>
       <button type="button" data-ir="inicio">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-        Destaques
+        Site
       </button>
       <button type="button" data-ir="ajustes">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -236,21 +255,49 @@
           <p class="previa-preco" id="previa-preco" aria-live="polite"></p>
         </div>
 
-        <div class="duas">
+        <div class="cartao bloco-preco">
+          <h3 class="bloco__titulo">Detalhes da vela</h3>
+          <div class="duas">
+            <label class="campo">
+              <span>Peso / tamanho</span>
+              <input type="text" name="size" maxlength="120" placeholder="Ex.: 150 g">
+            </label>
+            <label class="campo">
+              <span>Aroma</span>
+              <input type="text" name="aroma" maxlength="120" placeholder="Ex.: Lavanda">
+            </label>
+          </div>
+          <div class="duas">
+            <label class="campo">
+              <span>Tempo de queima</span>
+              <input type="text" name="burn_time" maxlength="80" placeholder="Ex.: 30 horas">
+            </label>
+            <label class="campo">
+              <span>Pedido mínimo (un.)</span>
+              <input type="number" name="min_qty" min="1" max="1000" inputmode="numeric" value="1">
+              <small>Ex.: 20 para lembrancinhas</small>
+            </label>
+          </div>
           <label class="campo">
-            <span>Aroma</span>
-            <input type="text" name="aroma" maxlength="120" placeholder="Ex.: Lavanda">
-          </label>
-          <label class="campo">
-            <span>Tamanho / peso</span>
-            <input type="text" name="size" maxlength="120" placeholder="Ex.: 150 g">
+            <span>Do que é feita</span>
+            <textarea name="material" rows="2" maxlength="600" placeholder="Ex.: cera vegetal de soja, pavio de algodão, essência, pote de vidro com tampa de bambu"></textarea>
           </label>
         </div>
 
         <label class="campo">
           <span>Descrição</span>
-          <textarea name="description" rows="5" maxlength="5000" placeholder="Conte sobre a vela: aroma, tempo de queima, para que ocasião combina..."></textarea>
+          <textarea name="description" rows="5" maxlength="5000" placeholder="Conte sobre a vela: como é o aroma, a sensação, o acabamento, por que é especial..."></textarea>
         </label>
+
+        <div class="campo">
+          <span>Para que momento serve</span>
+          <div class="momentos-escolha" id="momentos-escolha"></div>
+          <div class="momento-novo">
+            <input type="text" id="momento-novo" maxlength="40" placeholder="Outro momento (ex.: Batizado)" aria-label="Outro momento">
+            <button type="button" class="btn btn--sm" id="momento-add">Adicionar</button>
+          </div>
+          <small>Aparece no produto e vira filtro no catálogo e na página inicial.</small>
+        </div>
 
         <div class="cartao interruptores">
           <label class="interruptor">

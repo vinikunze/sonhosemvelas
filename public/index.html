@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Sonhos em Velas | Velas aromáticas artesanais em Sinop, MT</title>
-  <meta name="description" content="Velas aromáticas artesanais feitas à mão em Sinop, MT. Veja o catálogo completo e faça seu pedido pelo WhatsApp.">
-  <meta name="theme-color" content="#21111C">
+  <meta name="description" content="Velas aromáticas artesanais feitas à mão em Sinop, MT. Velas em pote, velas gruta, lembrancinhas e kits para presente. Monte sua sacola e peça pelo WhatsApp.">
+  <meta name="theme-color" content="#0E0A0C">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Sonhos em Velas | Velas aromáticas artesanais">
   <meta property="og:description" content="Transformando sonhos em velas. Veja o catálogo e peça pelo WhatsApp.">
@@ -16,245 +16,206 @@
   <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Manrope:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="/assets/css/site.css">
   <link rel="preload" as="fetch" href="/api/catalogo" crossorigin>
   <link rel="prefetch" href="/catalogo">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Store",
-    "name": "Sonhos em Velas",
-    "description": "Velas aromáticas artesanais",
-    "image": "/assets/img/logo.png",
-    "address": { "@type": "PostalAddress", "addressLocality": "Sinop", "addressRegion": "MT", "addressCountry": "BR" },
-    "telephone": "+55 66 99635-9962",
-    "sameAs": ["https://www.instagram.com/sonhosemvelas_/"]
-  }
+  {"@context":"https://schema.org","@type":"Store","name":"Sonhos em Velas","description":"Velas aromáticas artesanais","image":"/assets/img/logo.png","address":{"@type":"PostalAddress","addressLocality":"Sinop","addressRegion":"MT","addressCountry":"BR"},"telephone":"+55 66 99635-9962","sameAs":["https://www.instagram.com/sonhosemvelas_/"]}
   </script>
 </head>
 <body>
-  <a class="skip" href="#destaques">Pular para os destaques</a>
-
+  <a class="skip" href="#colecoes">Pular para o conteúdo</a>
   <div class="aviso" id="aviso" hidden></div>
 
-  <header class="topo topo--hero" id="topo">
+  <header class="topo" id="topo">
     <div class="topo__inner">
-      <a class="marca" href="/" aria-label="Sonhos em Velas, página inicial">
-        <img src="/assets/img/logo.png" alt="" width="44" height="44">
-        <span>Sonhos em Velas</span>
-      </a>
-      <nav class="menu" aria-label="Principal">
+      <a class="marca" href="/" aria-label="Sonhos em Velas, início"><img src="/assets/img/logo.png" alt="" width="44" height="44"><span>Sonhos em Velas</span></a>
+      <nav class="nav" aria-label="Principal">
         <a href="/catalogo">Catálogo</a>
-        <a href="#destaques">Destaques</a>
-        <a href="#como-pedir">Como pedir</a>
-        <a href="#sobre">Sobre</a>
+        <a href="#colecoes">Coleções</a>
+        <a href="#momentos">Momentos</a>
+        <a href="#essencia">Nossa história</a>
+        <a href="#contato">Contato</a>
       </nav>
-      <a class="btn btn--sm btn--wpp js-wpp" href="#" data-msg="Olá! Vim pelo site da Sonhos em Velas.">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wpp"/></svg>
-        <span>WhatsApp</span>
-      </a>
+      <div class="topo__acoes">
+        <a class="btn btn--sm btn-cta" href="/catalogo">Comprar</a>
+        <button type="button" class="btn-icone" data-abrir-sacola aria-label="Abrir sacola"><svg class="ic"><use href="#i-sacola"/></svg><span class="contador">0</span></button>
+        <button type="button" class="btn-menu" data-abrir-menu aria-label="Abrir menu">MENU <i></i></button>
+      </div>
     </div>
   </header>
 
   <main>
-    <section class="hero" aria-labelledby="hero-titulo">
-      <div class="hero__glow" aria-hidden="true"></div>
+    <!-- Topo -->
+    <section class="hero" id="hero" aria-labelledby="hero-titulo">
+      <div class="hero__midia" id="hero-midia" hidden></div>
+      <div class="hero__arte" id="hero-arte" aria-hidden="true"></div>
+      <div class="brasas" id="brasas" aria-hidden="true"></div>
       <div class="hero__inner">
         <div class="hero__texto">
-          <p class="selo reveal">Velas artesanais · Sinop, MT</p>
-          <h1 id="hero-titulo" class="titulo-anima"><span class="p"><span>Transformando</span></span> <span class="p"><em>sonhos</em></span> <span class="p"><span>em</span></span> <span class="p"><span>velas</span></span></h1>
-          <p class="hero__sub reveal">Feitas à mão, uma a uma, para deixar a sua casa mais aconchegante e os seus presentes inesquecíveis.</p>
-          <div class="hero__acoes reveal">
-            <a class="btn btn--claro btn--seta" href="/catalogo">Ver catálogo <span aria-hidden="true">→</span></a>
-            <a class="btn btn--contorno js-wpp" href="#" data-msg="Olá! Vim pelo site e gostaria de fazer um pedido.">Pedir pelo WhatsApp</a>
+          <span class="rotulo">Velas artesanais · Sinop, MT</span>
+          <h1 id="hero-titulo" class="titulo">
+            <span class="linha"><span>Transformando</span></span>
+            <span class="linha"><span><em>sonhos</em> em</span></span>
+            <span class="linha"><span>velas.</span></span>
+          </h1>
+          <p class="lead">Velas aromáticas feitas à mão, uma a uma, para perfumar a sua casa, presentear quem você ama e iluminar os seus momentos especiais.</p>
+          <div class="hero__acoes">
+            <a class="btn" href="/catalogo">Ver catálogo <svg class="ic seta"><use href="#i-seta"/></svg></a>
+            <a class="btn btn--linha js-wpp" href="#" data-msg="Olá! Vim pelo site e gostaria de uma vela personalizada.">Encomendar personalizada</a>
+          </div>
+          <div class="hero__info">
+            <span><svg class="ic"><use href="#i-mao"/></svg>Feitas à mão</span>
+            <span><svg class="ic"><use href="#i-caminhao"/></svg>Entrega em Sinop e região</span>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="hero__vela" id="hero-vela" aria-hidden="true">
-          <svg viewBox="0 0 320 380" class="vela-svg">
-            <defs>
-              <radialGradient id="g-halo" cx="50%" cy="40%" r="50%">
-                <stop offset="0" stop-color="#FFD9A0" stop-opacity=".55"/>
-                <stop offset=".45" stop-color="#FF8FBF" stop-opacity=".2"/>
-                <stop offset="1" stop-color="#FF8FBF" stop-opacity="0"/>
-              </radialGradient>
-              <linearGradient id="g-chama" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0" stop-color="#FFF6E0"/>
-                <stop offset=".35" stop-color="#FFD58A"/>
-                <stop offset="1" stop-color="#FF9F5A" stop-opacity=".9"/>
-              </linearGradient>
-              <linearGradient id="g-vidro" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#fff" stop-opacity=".16"/>
-                <stop offset=".25" stop-color="#fff" stop-opacity=".04"/>
-                <stop offset=".8" stop-color="#fff" stop-opacity=".02"/>
-                <stop offset="1" stop-color="#fff" stop-opacity=".12"/>
-              </linearGradient>
-              <linearGradient id="g-cera" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#FFE9DD"/>
-                <stop offset="1" stop-color="#FF9DBF"/>
-              </linearGradient>
-            </defs>
-            <circle class="vela-halo" cx="160" cy="120" r="150" fill="url(#g-halo)"/>
-            <!-- pote -->
-            <rect x="78" y="150" width="164" height="200" rx="22" fill="url(#g-vidro)" stroke="rgba(255,255,255,.28)" stroke-width="1.5"/>
-            <!-- cera -->
-            <path d="M88 200 Q160 188 232 200 L232 326 Q232 340 218 340 L102 340 Q88 340 88 326 Z" fill="url(#g-cera)" opacity=".92"/>
-            <ellipse cx="160" cy="198" rx="72" ry="9" fill="#FFF3EC" opacity=".9"/>
-            <!-- rótulo -->
-            <rect x="112" y="246" width="96" height="54" rx="6" fill="#FAF7F3" opacity=".95"/>
-            <text x="160" y="270" text-anchor="middle" font-family="Fraunces, serif" font-size="13" font-style="italic" fill="#A22A5E">Sonhos</text>
-            <text x="160" y="287" text-anchor="middle" font-family="Fraunces, serif" font-size="13" font-style="italic" fill="#A22A5E">em Velas</text>
-            <!-- pavio + chama -->
-            <line x1="160" y1="198" x2="160" y2="176" stroke="#3A1F2E" stroke-width="2.5" stroke-linecap="round"/>
-            <g class="chama">
-              <path d="M160 108 C176 132 178 152 170 166 C165 174 155 174 150 166 C142 152 146 132 160 108 Z" fill="url(#g-chama)"/>
-              <path d="M160 140 C166 150 166 160 162 166 C160 169 158 169 157 166 C154 160 155 150 160 140 Z" fill="#FFFDF6"/>
-            </g>
-            <!-- reflexo do vidro -->
-            <path d="M96 168 L96 320" stroke="rgba(255,255,255,.35)" stroke-width="3" stroke-linecap="round"/>
-          </svg>
+    <!-- Coleções numeradas -->
+    <section class="colecoes" id="colecoes" aria-label="Coleções">
+      <ul class="colecoes__lista" id="colecoes-lista"></ul>
+    </section>
+
+    <!-- Essência -->
+    <section class="secao" id="essencia" aria-labelledby="ess-titulo">
+      <div class="secao__inner essencia__grade">
+        <div class="essencia__foto reveal-img" id="essencia-foto">
+          <div class="essencia__selo" aria-hidden="true"><span>Feito<br>à mão</span></div>
+        </div>
+        <div class="essencia__texto">
+          <span class="rotulo reveal">Nossa essência</span>
+          <h2 id="ess-titulo" class="titulo-2 reveal" style="margin-top:18px">Cada vela guarda<br><em>um sonho.</em></h2>
+          <p class="lead reveal" id="sobre-texto">A Sonhos em Velas nasceu em Sinop com um propósito simples: transformar sonhos em velas. Cada peça é feita à mão, com aromas escolhidos com carinho.</p>
+          <ul class="pontos reveal"><li>Artesanal</li><li>Aromas exclusivos</li><li>Com carinho</li></ul>
+          <a class="link-seta reveal" href="#contato">Fale com a gente <svg class="ic seta"><use href="#i-seta"/></svg></a>
         </div>
       </div>
-      <a class="hero__seta" href="#destaques" aria-label="Ver os destaques">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
     </section>
 
     <div class="letreiro" aria-hidden="true">
       <div class="letreiro__trilho" id="letreiro">
-        <span>Velas gruta</span><span>Lembrancinhas</span><span>Potes pequenos</span><span>Potes grandes</span><span>Kits para presente</span><span>Feitas à mão em Sinop</span><span>Velas gruta</span><span>Lembrancinhas</span><span>Potes pequenos</span><span>Potes grandes</span><span>Kits para presente</span><span>Feitas à mão em Sinop</span>
+        <span>Sinop · MT</span><span>Velas artesanais</span><span>Aromas que acolhem</span><span>Feitas à mão</span><span>Presentes especiais</span>
+        <span>Sinop · MT</span><span>Velas artesanais</span><span>Aromas que acolhem</span><span>Feitas à mão</span><span>Presentes especiais</span>
       </div>
     </div>
 
-    <section class="destaques" id="destaques" aria-labelledby="dest-titulo">
-      <div class="destaques__cab">
+    <!-- Destaques -->
+    <section class="secao" id="destaques" aria-labelledby="dest-titulo">
+      <div class="secao__inner">
+        <div class="carrossel-cab">
+          <div class="secao__cab" style="margin:0">
+            <span class="rotulo reveal">Escolhidas a dedo</span>
+            <h2 id="dest-titulo" class="titulo-2 reveal">Destaques<br><em>da semana.</em></h2>
+            <p class="lead reveal" id="dest-sub" hidden></p>
+          </div>
+          <div class="carrossel-nav">
+            <button type="button" id="dest-ant" aria-label="Anterior"><svg class="ic"><use href="#i-seta-esq"/></svg></button>
+            <button type="button" id="dest-prox" aria-label="Próximo"><svg class="ic"><use href="#i-seta"/></svg></button>
+          </div>
+        </div>
+        <div class="carrossel" id="carrossel">
+          <div class="esqueleto"></div><div class="esqueleto"></div><div class="esqueleto"></div><div class="esqueleto"></div>
+        </div>
+        <div class="carrossel-rodape"><a class="link-seta" href="/catalogo">Ver o catálogo completo <svg class="ic seta"><use href="#i-seta"/></svg></a></div>
+      </div>
+    </section>
+
+    <!-- Vitrine de coleções -->
+    <section class="secao" id="vitrine" aria-labelledby="vit-titulo" style="padding-top:0" hidden>
+      <div class="secao__inner">
+        <div class="secao__cab">
+          <span class="rotulo reveal">Coleções</span>
+          <h2 id="vit-titulo" class="titulo-2 reveal">Escolha pelo<br><em>desejo.</em></h2>
+        </div>
+        <div class="vitrine" id="vitrine-grade"></div>
+      </div>
+    </section>
+
+    <!-- Momentos -->
+    <section class="secao momentos" id="momentos" aria-labelledby="mom-titulo">
+      <div class="secao__inner">
+        <div class="secao__cab">
+          <span class="rotulo reveal">Para cada ocasião</span>
+          <h2 id="mom-titulo" class="titulo-2 reveal">Uma vela para<br><em>cada momento.</em></h2>
+          <p class="lead reveal">Toque em um momento e veja as velas que combinam com ele.</p>
+        </div>
+        <ul class="momentos__lista" id="momentos-lista"></ul>
+      </div>
+    </section>
+
+    <!-- Galeria (fotos do ateliê, enviadas pelo painel) -->
+    <section class="secao" id="galeria" aria-labelledby="gal-titulo" hidden>
+      <div class="secao__inner">
+        <div class="secao__cab">
+          <span class="rotulo reveal">Por dentro do ateliê</span>
+          <h2 id="gal-titulo" class="titulo-2 reveal">Feito com<br><em>as mãos.</em></h2>
+        </div>
+        <div class="galeria" id="galeria-trilho"></div>
+      </div>
+    </section>
+
+    <!-- Personalizadas -->
+    <section class="impacto" aria-labelledby="imp-titulo">
+      <div class="impacto__luz" aria-hidden="true"></div>
+      <span class="rotulo rotulo--centro reveal">Mais que uma vela</span>
+      <h2 id="imp-titulo" class="reveal">Bons momentos merecem <em>uma luz especial.</em></h2>
+      <p class="lead reveal">Lembrancinhas para casamentos, aniversários e chás, kits para presentear e velas com a sua identidade. A gente cria junto com você.</p>
+      <a class="btn reveal js-wpp" href="#" data-msg="Olá! Gostaria de encomendar velas personalizadas.">Planejar minha encomenda <svg class="ic seta"><use href="#i-seta"/></svg></a>
+    </section>
+
+    <section class="secao" style="padding-top:0" aria-label="Ocasiões especiais">
+      <div class="secao__inner ocasioes">
+        <article class="reveal"><span class="num">01</span><h3>Casamentos</h3><p>Lembrancinhas delicadas para agradecer quem esteve com vocês no grande dia.</p></article>
+        <article class="reveal" style="--d:.08s"><span class="num">02</span><h3>Aniversários e chás</h3><p>Velas com tag personalizada, nas cores e aromas da festa.</p></article>
+        <article class="reveal" style="--d:.16s"><span class="num">03</span><h3>Presentes corporativos</h3><p>Kits para clientes e equipes, com a identidade da sua empresa.</p></article>
+      </div>
+    </section>
+
+    <!-- Como pedir -->
+    <section class="secao" id="como-pedir" aria-labelledby="cp-titulo" style="padding-top:0">
+      <div class="secao__inner">
+        <div class="secao__cab">
+          <span class="rotulo reveal">Como pedir</span>
+          <h2 id="cp-titulo" class="titulo-2 reveal">Simples, do jeito<br><em>que deve ser.</em></h2>
+        </div>
+        <ol class="passos">
+          <li class="reveal"><svg class="ic"><use href="#i-sacola"/></svg><h3>Monte sua sacola</h3><p>Escolha as velas no catálogo e a quantidade de cada uma.</p></li>
+          <li class="reveal" style="--d:.08s"><svg class="ic"><use href="#i-wpp"/></svg><h3>Finalize no WhatsApp</h3><p>O pedido chega pronto para a gente, com os itens e o total.</p></li>
+          <li class="reveal" style="--d:.16s"><svg class="ic"><use href="#i-caminhao"/></svg><h3>Receba com carinho</h3><p>Combinamos pagamento e entrega em Sinop e cidades da região.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Contato -->
+    <section class="secao visite" id="contato" aria-labelledby="ct-titulo">
+      <div class="secao__inner visite__grade">
         <div>
-          <p class="sobretitulo reveal">Escolhidas a dedo</p>
-          <h2 id="dest-titulo" class="reveal">Destaques da semana</h2>
-          <p class="secao__sub reveal" id="dest-sub"></p>
+          <span class="rotulo reveal">Fale com a gente</span>
+          <h2 id="ct-titulo" class="titulo-2 reveal" style="margin-top:18px">Esperamos<br><em>por você.</em></h2>
+          <p class="lead reveal">Tire dúvidas, peça sugestões de aromas ou encomende a sua vela. Respondemos pelo WhatsApp.</p>
         </div>
-        <div class="destaques__nav reveal">
-          <button type="button" class="seta-btn" id="dest-ant" aria-label="Anterior">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button type="button" class="seta-btn" id="dest-prox" aria-label="Próximo">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
+        <ul class="visite__lista reveal">
+          <li><a class="js-wpp" href="#" data-msg="Olá! Vim pelo site da Sonhos em Velas."><svg class="ic"><use href="#i-wpp"/></svg><span><small>WhatsApp</small><strong class="js-fone">(66) 99635-9962</strong></span><span class="circ-seta"><svg><use href="#i-seta-diag"/></svg></span></a></li>
+          <li><a class="js-insta" href="https://www.instagram.com/sonhosemvelas_/" target="_blank" rel="noopener"><svg class="ic"><use href="#i-insta"/></svg><span><small>Instagram</small><strong class="js-insta-nome">@sonhosemvelas_</strong></span><span class="circ-seta"><svg><use href="#i-seta-diag"/></svg></span></a></li>
+          <li><div><svg class="ic"><use href="#i-local"/></svg><span><small>Onde estamos</small><strong>Sinop · MT</strong></span></div></li>
+          <li><div><svg class="ic"><use href="#i-caminhao"/></svg><span><small>Entregas</small><strong>Sinop e cidades da região</strong></span></div></li>
+        </ul>
       </div>
-      <div class="carrossel" id="carrossel" tabindex="0" aria-label="Produtos em destaque">
-        <div class="card card--esqueleto"></div><div class="card card--esqueleto"></div><div class="card card--esqueleto"></div><div class="card card--esqueleto"></div>
-      </div>
-      <div class="destaques__rodape reveal">
-        <a class="btn btn--seta" href="/catalogo">Ver catálogo completo <span aria-hidden="true">→</span></a>
-      </div>
-    </section>
-
-    <section class="tipos" id="tipos" aria-labelledby="tipos-titulo" hidden>
-      <div class="secao__cab">
-        <p class="sobretitulo reveal">Para cada momento</p>
-        <h2 id="tipos-titulo" class="reveal">Nossas velas</h2>
-        <p class="secao__sub reveal">Do presente especial à lembrancinha da festa.</p>
-      </div>
-      <div class="tipos__grade" id="tipos-grade"></div>
-    </section>
-
-    <section class="faixa" aria-label="Diferenciais">
-      <ul class="faixa__lista">
-        <li class="reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mao"/></svg>
-          <div><strong>Feitas à mão</strong><span>Cada vela é única</span></div>
-        </li>
-        <li class="reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flor"/></svg>
-          <div><strong>Aromas especiais</strong><span>Para cada momento</span></div>
-        </li>
-        <li class="reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-presente"/></svg>
-          <div><strong>Para presentear</strong><span>Kits e lembrancinhas</span></div>
-        </li>
-        <li class="reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wpp"/></svg>
-          <div><strong>Pedido fácil</strong><span>Direto pelo WhatsApp</span></div>
-        </li>
-      </ul>
-    </section>
-
-    <section class="passos" id="como-pedir" aria-labelledby="passos-titulo">
-      <div class="secao__cab">
-        <p class="sobretitulo">Como pedir</p>
-        <h2 id="passos-titulo">Simples assim</h2>
-      </div>
-      <ol class="passos__lista">
-        <li class="reveal">
-          <span class="passos__num">1</span>
-          <h3>Escolha no catálogo</h3>
-          <p>Veja as fotos, aromas, tamanhos e valores no <a href="/catalogo">catálogo</a>.</p>
-        </li>
-        <li class="reveal">
-          <span class="passos__num">2</span>
-          <h3>Chame no WhatsApp</h3>
-          <p>O botão já envia o nome do produto. É só mandar a mensagem.</p>
-        </li>
-        <li class="reveal">
-          <span class="passos__num">3</span>
-          <h3>Receba em casa</h3>
-          <p>Combinamos o pagamento e enviamos para Sinop e cidades da região.</p>
-        </li>
-      </ol>
-    </section>
-
-    <section class="sobre" id="sobre" aria-labelledby="sobre-titulo">
-      <div class="sobre__inner">
-        <img class="sobre__logo reveal" src="/assets/img/logo.png" alt="Logo da Sonhos em Velas: uma mão segurando uma vela acesa" width="220" height="220" loading="lazy">
-        <div class="reveal">
-          <p class="sobretitulo">Sobre nós</p>
-          <h2 id="sobre-titulo">Feito com carinho, em Sinop</h2>
-          <p class="sobre__texto" id="sobre-texto"></p>
-          <a class="link-insta" id="link-insta" href="https://www.instagram.com/sonhosemvelas_/" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-insta"/></svg>
-            <span id="insta-handle">@sonhosemvelas_</span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta-final" aria-labelledby="cta-titulo">
-      <div class="hero__glow" aria-hidden="true"></div>
-      <h2 id="cta-titulo" class="reveal">Quer uma vela personalizada?</h2>
-      <p class="reveal">Lembrancinhas, casamentos, aniversários e presentes corporativos. Conta pra gente o que você imaginou.</p>
-      <a class="btn btn--claro reveal js-wpp" href="#" data-msg="Olá! Gostaria de saber sobre velas personalizadas.">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><use href="#i-wpp"/></svg>
-        Falar no WhatsApp
-      </a>
     </section>
   </main>
 
   <footer class="rodape">
-    <div class="rodape__inner">
-      <a class="marca" href="/"><img src="/assets/img/logo.png" alt="" width="36" height="36" loading="lazy"><span>Sonhos em Velas</span></a>
-      <p>Velas aromáticas artesanais · Sinop, MT</p>
-      <p class="rodape__links">
-        <a href="/catalogo">Catálogo</a>
-        <a href="#" class="js-wpp" data-msg="Olá! Vim pelo site da Sonhos em Velas.">WhatsApp</a>
-        <a href="https://www.instagram.com/sonhosemvelas_/" target="_blank" rel="noopener" class="js-insta">Instagram</a>
-      </p>
-      <p class="rodape__copy">© <span id="ano"></span> Sonhos em Velas</p>
-    </div>
+    <a class="rodape__marca" href="/"><img src="/assets/img/logo.png" alt="" width="88" height="88" loading="lazy"><span>Sonhos em Velas</span></a>
+    <p class="rodape__frase">Velas artesanais · Aromas · Presentes</p>
+    <nav class="rodape__links" aria-label="Rodapé">
+      <a href="/catalogo">Catálogo</a><a href="#colecoes">Coleções</a>
+      <a href="#momentos">Momentos</a><a href="#contato">Contato</a>
+      <a class="js-wpp" href="#" data-msg="Olá! Vim pelo site da Sonhos em Velas.">WhatsApp</a><a class="js-insta" href="https://www.instagram.com/sonhosemvelas_/" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <p class="rodape__fim">© <span id="ano"></span> Sonhos em Velas · Sinop, MT · <a href="/admin" rel="nofollow">Área da loja</a></p>
   </footer>
-
-  <a class="wpp-flutuante js-wpp" href="#" data-msg="Olá! Vim pelo site da Sonhos em Velas." aria-label="Falar no WhatsApp">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wpp"/></svg>
-  </a>
-
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <symbol id="i-wpp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.23 8.25c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48a.92.92 0 0 0-.66.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28Z"/></symbol>
-    <symbol id="i-insta" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"/></symbol>
-    <symbol id="i-mao" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M3 15.5c2.4-1.2 4.4-1.4 6.2-.6l3.6 1.5c.9.4 1.3 1.4.9 2.2-.3.7-1.1 1-1.8.8L9 18.6M3 20.5l3.4-1.2c1.2-.4 2.4-.4 3.6 0l2.6.9c1.3.4 2.7.2 3.8-.6l4.7-3.6c.7-.5.8-1.5.2-2.2-.5-.6-1.4-.7-2-.2l-3.4 2.3M10 4.5c1 1.2 1.2 2.3.6 3.3-.4.6-1.3.6-1.7 0-.6-1 .1-2.2 1.1-3.3ZM9.7 9.5v3"/></symbol>
-    <symbol id="i-flor" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8M12 13c-3.5 0-5-2.5-5-5 2.5 0 5 1.5 5 5Zm0 0c3.5 0 5-2.5 5-5-2.5 0-5 1.5-5 5Zm0-4.5C10.5 7 10.5 4.5 12 3c1.5 1.5 1.5 4 0 5.5ZM8 21h8"/></symbol>
-    <symbol id="i-presente" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M4 11h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9ZM3 7h18v4H3zM12 7v14M12 7c-1.5-3-5-3.5-5-1.5S10 7 12 7Zm0 0c1.5-3 5-3.5 5-1.5S14 7 12 7Z"/></symbol>
-  </svg>
 
   <script type="module" src="/assets/js/inicio.js"></script>
 </body>

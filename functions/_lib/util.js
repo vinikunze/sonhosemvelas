@@ -26,6 +26,18 @@ export function novoId() {
   return crypto.randomUUID();
 }
 
+export function lista(texto) {
+  try {
+    const v = JSON.parse(texto || '[]');
+    return Array.isArray(v) ? v.map(String) : [];
+  } catch { return []; }
+}
+
+export function ajustesDoBanco(row) {
+  if (!row) return {};
+  return { ...row, gallery: lista(row.gallery) };
+}
+
 // Converte uma linha do banco para o formato usado no site
 export function produtoDoBanco(row) {
   if (!row) return null;
@@ -45,6 +57,10 @@ export function produtoDoBanco(row) {
     category_name: row.category_name ?? null,
     category_slug: row.category_slug ?? null,
     aroma: row.aroma,
+    material: row.material ?? '',
+    burn_time: row.burn_time ?? '',
+    occasions: lista(row.occasions),
+    min_qty: row.min_qty ?? 1,
     size: row.size,
     images,
     available: !!row.available,

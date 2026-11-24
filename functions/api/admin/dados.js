@@ -1,9 +1,9 @@
-import { json, produtoDoBanco, SELECT_PRODUTO, ORDEM_PRODUTO } from '../../_lib/util.js';
+import { json, ajustesDoBanco, produtoDoBanco, SELECT_PRODUTO, ORDEM_PRODUTO } from '../../_lib/util.js';
 
 // GET /api/admin/dados : tudo para o painel (inclui produtos escondidos)
 export async function onRequestGet({ env }) {
   const [settings, categorias, produtos] = await env.DB.batch([
-    env.DB.prepare('SELECT whatsapp, instagram, announcement, about, home_title, home_subtitle FROM settings WHERE id = 1'),
+    env.DB.prepare('SELECT whatsapp, instagram, announcement, about, home_title, home_subtitle, hero_image, about_image, gallery FROM settings WHERE id = 1'),
     env.DB.prepare(
       `SELECT c.id, c.name, c.slug, c.position, COUNT(p.id) AS total
        FROM categories c LEFT JOIN products p ON p.category_id = c.id
@@ -12,7 +12,7 @@ export async function onRequestGet({ env }) {
     env.DB.prepare(`${SELECT_PRODUTO} ${ORDEM_PRODUTO}`),
   ]);
   return json({
-    settings: settings.results[0] || {},
+    settings: ajustesDoBanco(settings.results[0]),
     categorias: categorias.results,
     produtos: produtos.results.map(produtoDoBanco),
   });

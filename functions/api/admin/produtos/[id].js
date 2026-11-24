@@ -19,12 +19,13 @@ export async function onRequestPut({ request, env, params }) {
   await env.DB.prepare(
     `UPDATE products SET name = ?2, slug = ?3, description = ?4, price_cents = ?5, promo_price_cents = ?6, installments = ?7,
        interest_free = ?8, category_id = ?9, aroma = ?10, size = ?11, images = ?12, available = ?13, featured = ?14,
-       featured_position = ?15, visible = ?16, updated_at = datetime('now')
+       featured_position = ?15, visible = ?16, material = ?17, burn_time = ?18, occasions = ?19, min_qty = ?20,
+       updated_at = datetime('now')
      WHERE id = ?1`,
   ).bind(
     atual.id, dados.name, slug, dados.description, dados.price_cents, dados.promo_price_cents, dados.installments,
     dados.interest_free, dados.category_id, dados.aroma, dados.size, JSON.stringify(dados.images), dados.available,
-    dados.featured, posDestaque, dados.visible,
+    dados.featured, posDestaque, dados.visible, dados.material, dados.burn_time, dados.occasions, dados.min_qty,
   ).run();
 
   let antigas = [];

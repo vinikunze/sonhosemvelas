@@ -22,6 +22,7 @@ import * as produtos from '../functions/api/admin/produtos.js';
 import * as produto from '../functions/api/admin/produtos/[id].js';
 import * as fotos from '../functions/api/admin/fotos.js';
 import * as foto from '../functions/api/admin/fotos/[key].js';
+import * as midia from '../functions/api/admin/midia.js';
 
 const ROTAS = [
   ['/api/catalogo', catalogo],
@@ -41,6 +42,7 @@ const ROTAS = [
   ['/api/admin/produtos/:id', produto],
   ['/api/admin/fotos', fotos],
   ['/api/admin/fotos/:key', foto],
+  ['/api/admin/midia', midia],
 ].map(([padrao, modulo]) => {
   const nomes = [];
   const re = new RegExp('^' + padrao.replace(/:([a-z]+)/g, (_, n) => { nomes.push(n); return '([^/]+)'; }) + '/?$');

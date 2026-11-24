@@ -1,11 +1,12 @@
 # Sonhos em Velas
 
-Site da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT), com catálogo e painel para cadastrar produtos.
+Loja online da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT). Visual editorial escuro e quente, com sacola e fechamento do pedido pelo WhatsApp.
 
-- **Site de apresentação** (`/`): topo com movimento, destaques da semana (escolhidos no painel), tipos de vela, como pedir e sobre.
-- **Catálogo** (`/catalogo`): página separada para enviar às clientes. Tem busca, filtro por tipo de vela, ordenação, preço com desconto e parcelamento, botão para enviar o link no WhatsApp e **Baixar PDF** (gerado no navegador, respeitando o filtro escolhido). O link de uma categoria (`/catalogo?categoria=velas-gruta`) abre o catálogo já filtrado.
-- **Página de cada produto** (`/p/nome-do-produto`): fotos, preço, parcelas e pedido pelo WhatsApp com mensagem pronta.
-- **Painel** (`/admin`): produtos (fotos, tipo de vela, preço normal e com desconto, parcelamento), categorias, destaques da página inicial (com ordem) e ajustes. Quando a administradora está logada, o catálogo mostra um botão **Editar** em cada produto.
+- **Site de apresentação** (`/`): topo com foto de capa (ou vela animada), coleções numeradas, nossa essência, destaques da semana, coleções em imagem, momentos de uso, galeria do ateliê, personalizadas, como pedir e contato. Menu em tela cheia no celular.
+- **Catálogo / loja** (`/catalogo`): abas por coleção, gaveta de filtros (busca, momento, ordenação, promoções), botão "+" para colocar na sacola, enviar catálogo no WhatsApp, copiar link e baixar PDF. Filtros viram link (`?categoria=`, `?momento=`).
+- **Página da vela** (`/p/nome`): galeria, preço com desconto e parcelas, peso, aroma, tempo de queima, pedido mínimo, quantidade, "Adicionar à sacola", detalhes (sobre, do que é feita, ideal para, cuidados, entrega).
+- **Sacola**: guarda os itens no aparelho da cliente; "Finalizar pelo WhatsApp" envia a lista, quantidades, total, nome, entrega/retirada e observação.
+- **Painel** (`/admin`): produtos (fotos, tipo, preços, parcelas, peso, aroma, queima, composição, momentos de uso, pedido mínimo), categorias, página inicial (destaques e fotos do site: capa, "nossa essência" e galeria) e ajustes.
 
 ## Como funciona
 

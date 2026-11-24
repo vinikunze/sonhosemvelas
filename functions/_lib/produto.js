@@ -36,6 +36,16 @@ export async function lerProduto(request, db) {
     if (!cat) category_id = null;
   }
 
+  let min_qty = Math.round(Number(b.min_qty || 1));
+  if (!Number.isFinite(min_qty) || min_qty < 1) min_qty = 1;
+  if (min_qty > 1000) min_qty = 1000;
+
+  const vistos = new Set();
+  const occasions = (Array.isArray(b.occasions) ? b.occasions : [])
+    .map((o) => String(o).trim().slice(0, 40))
+    .filter((o) => o && !vistos.has(o.toLowerCase()) && vistos.add(o.toLowerCase()))
+    .slice(0, 12);
+
   const images = Array.isArray(b.images) ? b.images.map(String).filter((k) => CHAVE_FOTO.test(k)).slice(0, 12) : [];
 
   return {
@@ -49,6 +59,10 @@ export async function lerProduto(request, db) {
       category_id,
       aroma: String(b.aroma || '').trim().slice(0, 120),
       size: String(b.size || '').trim().slice(0, 120),
+      material: String(b.material || '').trim().slice(0, 600),
+      burn_time: String(b.burn_time || '').trim().slice(0, 80),
+      occasions: JSON.stringify(occasions),
+      min_qty,
       images,
       available: b.available === false ? 0 : 1,
       featured: b.featured ? 1 : 0,

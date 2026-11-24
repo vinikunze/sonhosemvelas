@@ -9,7 +9,7 @@ export async function onRequestGet({ env, params }) {
     env.DB.prepare('SELECT whatsapp, instagram, announcement FROM settings WHERE id = 1'),
     env.DB.prepare(
       `${SELECT_PRODUTO} WHERE p.visible = 1 AND p.id != ?1
-       ORDER BY (p.category_id IS ?2) DESC, p.featured DESC, p.position, p.created_at DESC LIMIT 4`,
+       ORDER BY (p.category_id IS ?2) DESC, p.featured DESC, p.position, p.created_at DESC LIMIT 8`,
     ).bind(produto.id, produto.category_id),
   ]);
   return json(

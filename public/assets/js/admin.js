@@ -247,6 +247,11 @@ function abrirEditor(p) {
   form.aroma.value = p?.aroma || '';
   form.size.value = p?.size || '';
   form.description.value = p?.description || '';
+  form.material.value = p?.material || '';
+  form.burn_time.value = p?.burn_time || '';
+  form.min_qty.value = String(p?.min_qty || 1);
+  momentosSel = [...(p?.occasions || [])];
+  renderMomentosEscolha();
   form.available.checked = p ? p.available : true;
   form.featured.checked = p ? p.featured : false;
   form.visible.checked = p ? p.visible : true;
@@ -260,6 +265,41 @@ function abrirEditor(p) {
 }
 
 form.addEventListener('input', () => (alterado = true));
+
+/* Momentos de uso (ocasiões) */
+const MOMENTOS_PADRAO = ['Presente', 'Decoração', 'Relaxar', 'Lembrancinha', 'Casamento', 'Aniversário', 'Chá de bebê', 'Religioso', 'Natal', 'Dia das Mães', 'Datas especiais', 'Corporativo'];
+let momentosSel = [];
+function renderMomentosEscolha() {
+  const usados = estado.produtos.flatMap((p) => p.occasions || []);
+  const todos = [];
+  for (const m of [...MOMENTOS_PADRAO, ...usados, ...momentosSel]) {
+    if (!todos.some((x) => x.toLowerCase() === m.toLowerCase())) todos.push(m);
+  }
+  $('#momentos-escolha').innerHTML = todos
+    .map((m) => `<button type="button" data-momento="${esc(m)}" aria-pressed="${momentosSel.some((x) => x.toLowerCase() === m.toLowerCase())}">${esc(m)}</button>`)
+    .join('');
+}
+$('#momentos-escolha').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-momento]');
+  if (!b) return;
+  const m = b.dataset.momento;
+  const i = momentosSel.findIndex((x) => x.toLowerCase() === m.toLowerCase());
+  if (i >= 0) momentosSel.splice(i, 1); else momentosSel.push(m);
+  alterado = true;
+  renderMomentosEscolha();
+});
+function addMomento() {
+  const campo = $('#momento-novo');
+  const m = campo.value.trim().replace(/\s+/g, ' ');
+  if (!m) return;
+  const certo = m.charAt(0).toUpperCase() + m.slice(1);
+  if (!momentosSel.some((x) => x.toLowerCase() === certo.toLowerCase())) momentosSel.push(certo);
+  campo.value = '';
+  alterado = true;
+  renderMomentosEscolha();
+}
+$('#momento-add').addEventListener('click', addMomento);
+$('#momento-novo').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addMomento(); } });
 
 // Mostra para ela como o preço vai aparecer no site
 function previaPreco() {
@@ -437,6 +477,10 @@ form.addEventListener('submit', async (e) => {
     aroma: form.aroma.value.trim(),
     size: form.size.value.trim(),
     description: form.description.value.trim(),
+    material: form.material.value.trim(),
+    burn_time: form.burn_time.value.trim(),
+    min_qty: Math.max(1, Number(form.min_qty.value) || 1),
+    occasions: momentosSel,
     images: fotos.filter((f) => f.key).map((f) => f.key),
     available: form.available.checked,
     featured: form.featured.checked,
@@ -657,6 +701,102 @@ $('#form-inicio').addEventListener('submit', async (e) => {
   }
 });
 
+/* ---------------- Fotos do site ---------------- */
+
+let midiaAlvo = null;
+function renderMidia() {
+  const s = estado.settings || {};
+  document.querySelectorAll('[data-midia]').forEach((caixa) => {
+    const k = s[caixa.dataset.midia];
+    const foto = caixa.querySelector('.midia__foto');
+    foto.style.backgroundImage = k ? `url("${fotoUrl(k)}")` : '';
+    foto.textContent = k ? '' : '🕯️';
+    caixa.querySelector('[data-tirar]').hidden = !k;
+    caixa.querySelector('[data-trocar]').textContent = k ? 'Trocar foto' : 'Escolher foto';
+  });
+  const gal = s.gallery || [];
+  $('#galeria-fotos').innerHTML = gal.map((k, i) => `
+    <li class="foto">
+      <img src="${fotoUrl(k)}" alt="Foto ${i + 1} da galeria">
+      <div class="foto__acoes">
+        <button type="button" data-gal-mover="-1" data-i="${i}" aria-label="Mover para trás" ${i === 0 ? 'disabled' : ''}>‹</button>
+        <button type="button" class="remover" data-gal-tirar="${i}" aria-label="Remover foto">✕</button>
+        <button type="button" data-gal-mover="1" data-i="${i}" aria-label="Mover para frente" ${i === gal.length - 1 ? 'disabled' : ''}>›</button>
+      </div>
+    </li>`).join('') + (gal.length < 16 ? `<li><button type="button" class="foto-add" id="add-galeria">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      Adicionar</button></li>` : '');
+}
+
+async function salvarMidia(novo, msg) {
+  const atual = { hero_image: estado.settings.hero_image || '', about_image: estado.settings.about_image || '', gallery: estado.settings.gallery || [] };
+  const corpo = { ...atual, ...novo };
+  await api('/api/admin/midia', { metodo: 'PUT', corpo });
+  estado.settings = { ...estado.settings, ...corpo };
+  renderMidia();
+  if (msg) toast(msg);
+}
+
+async function enviarFoto(arquivo) {
+  const blob = await prepararFoto(arquivo);
+  const { key } = await api('/api/admin/fotos', { metodo: 'POST', corpo: blob, tipo: blob.type });
+  return key;
+}
+
+document.querySelectorAll('[data-midia]').forEach((caixa) => {
+  caixa.querySelector('[data-trocar]').addEventListener('click', () => { midiaAlvo = caixa.dataset.midia; $('#input-midia').click(); });
+  caixa.querySelector('[data-tirar]').addEventListener('click', async () => {
+    if (!confirm('Tirar esta foto do site?')) return;
+    try { await salvarMidia({ [caixa.dataset.midia]: '' }, 'Foto tirada do site'); } catch (err) { toast(err.message, true); }
+  });
+});
+$('#input-midia').addEventListener('change', async (e) => {
+  const arquivo = e.target.files[0];
+  e.target.value = '';
+  if (!arquivo || !midiaAlvo) return;
+  const caixa = document.querySelector(`[data-midia="${midiaAlvo}"] .midia__foto`);
+  caixa.classList.add('enviando');
+  try {
+    const key = await enviarFoto(arquivo);
+    await salvarMidia({ [midiaAlvo]: key }, 'Foto do site atualizada!');
+  } catch (err) {
+    toast(err instanceof ErroApi ? err.message : 'Não foi possível usar essa foto. Tente outra.', true);
+  } finally {
+    caixa.classList.remove('enviando');
+  }
+});
+
+$('#galeria-fotos').addEventListener('click', async (e) => {
+  if (e.target.closest('#add-galeria')) { $('#input-galeria').click(); return; }
+  const gal = [...(estado.settings.gallery || [])];
+  const tirar = e.target.closest('[data-gal-tirar]');
+  const mover = e.target.closest('[data-gal-mover]');
+  try {
+    if (tirar) {
+      gal.splice(Number(tirar.dataset.galTirar), 1);
+      await salvarMidia({ gallery: gal }, 'Foto tirada da galeria');
+    } else if (mover) {
+      const i = Number(mover.dataset.i);
+      const j = i + Number(mover.dataset.galMover);
+      [gal[i], gal[j]] = [gal[j], gal[i]];
+      await salvarMidia({ gallery: gal });
+    }
+  } catch (err) { toast(err.message, true); }
+});
+$('#input-galeria').addEventListener('change', async (e) => {
+  const arquivos = [...e.target.files].slice(0, 16 - (estado.settings.gallery || []).length);
+  e.target.value = '';
+  if (!arquivos.length) return;
+  toast(`Enviando ${arquivos.length} foto${arquivos.length > 1 ? 's' : ''}...`);
+  const novas = [];
+  for (const a of arquivos) {
+    try { novas.push(await enviarFoto(a)); } catch (err) { toast(err instanceof ErroApi ? err.message : 'Uma foto não pôde ser usada.', true); }
+  }
+  if (novas.length) {
+    try { await salvarMidia({ gallery: [...(estado.settings.gallery || []), ...novas] }, 'Galeria atualizada!'); } catch (err) { toast(err.message, true); }
+  }
+});
+
 /* ---------------- Ajustes ---------------- */
 
 function preencherAjustes() {
@@ -666,6 +806,7 @@ function preencherAjustes() {
   f.instagram.value = s.instagram || '';
   f.announcement.value = s.announcement || '';
   f.about.value = s.about || '';
+  renderMidia();
   const fi = $('#form-inicio');
   fi.home_title.value = s.home_title || '';
   fi.home_subtitle.value = s.home_subtitle || '';
