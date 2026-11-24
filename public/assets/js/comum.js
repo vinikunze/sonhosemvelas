@@ -67,10 +67,10 @@ export function precoLinha(p) {
 /* ============ Arte da vela (enquanto não há foto) ============ */
 
 const TONS = [
-  { fundo: ['#2A1620', '#120A0E'], cera: ['#F6D9E3', '#E79CB9'] },
-  { fundo: ['#2B1D14', '#120C09'], cera: ['#FBE7CF', '#E9B886'] },
-  { fundo: ['#1D1A20', '#0D0B0E'], cera: ['#EDE3F2', '#BCA3D0'] },
-  { fundo: ['#231B16', '#0F0B09'], cera: ['#F5EBDD', '#D8C1A2'] },
+  { fundo: ['#FBE6F0', '#F3D3E4'], cera: ['#FFF4F8', '#F4B9D2'] },
+  { fundo: ['#EEE5F8', '#DCCDF0'], cera: ['#FAF6FF', '#C9B3EA'] },
+  { fundo: ['#FFF0E6', '#FADCC9'], cera: ['#FFFAF4', '#F7C9A7'] },
+  { fundo: ['#F5EDF3', '#E9DAE6'], cera: ['#FFFDFB', '#E7CFDD'] },
 ];
 let idArte = 0;
 export function velaArte(seed = '', { texto = false, rotulo = true, fundo = true } = {}) {
@@ -81,22 +81,22 @@ export function velaArte(seed = '', { texto = false, rotulo = true, fundo = true
   return `<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Foto em breve">
     <defs>
       <radialGradient id="${id}f" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="${t.fundo[0]}"/><stop offset="1" stop-color="${t.fundo[1]}"/></radialGradient>
-      <radialGradient id="${id}h" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFD9A0" stop-opacity=".5"/><stop offset=".5" stop-color="#FF9FB8" stop-opacity=".12"/><stop offset="1" stop-color="#FF9FB8" stop-opacity="0"/></radialGradient>
+      <radialGradient id="${id}h" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFE3B0" stop-opacity=".9"/><stop offset=".5" stop-color="#FFB8D0" stop-opacity=".25"/><stop offset="1" stop-color="#FF9FB8" stop-opacity="0"/></radialGradient>
       <linearGradient id="${id}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t.cera[0]}"/><stop offset="1" stop-color="${t.cera[1]}"/></linearGradient>
       <linearGradient id="${id}l" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFF8E8"/><stop offset=".4" stop-color="#FFD58A"/><stop offset="1" stop-color="#FF9F5A" stop-opacity=".85"/></linearGradient>
-      <linearGradient id="${id}v" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".3" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#fff" stop-opacity=".14"/></linearGradient>
+      <linearGradient id="${id}v" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".3" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity=".6"/></linearGradient>
     </defs>
     ${fundo ? `<rect width="400" height="500" fill="url(#${id}f)"/>` : ''}
     <circle class="halo" cx="200" cy="200" r="170" fill="url(#${id}h)"/>
-    <ellipse cx="200" cy="420" rx="120" ry="12" fill="#000" opacity=".35"/>
-    <rect x="122" y="226" width="156" height="190" rx="22" fill="url(#${id}v)" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>
+    <ellipse cx="200" cy="420" rx="110" ry="11" fill="#6F4FA0" opacity=".12"/>
+    <rect x="122" y="226" width="156" height="190" rx="22" fill="url(#${id}v)" stroke="rgba(111,79,160,.28)" stroke-width="1.5"/>
     <path d="M131 268 Q200 256 269 268 L269 392 Q269 406 255 406 L145 406 Q131 406 131 392 Z" fill="url(#${id}c)"/>
     <ellipse cx="200" cy="266" rx="69" ry="9" fill="#fff" opacity=".55"/>
     ${rotulo ? `<rect x="158" y="312" width="84" height="46" rx="4" fill="#FBF5EE" opacity=".93"/><text x="200" y="332" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#7A2E4E">Sonhos</text><text x="200" y="348" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#7A2E4E">em Velas</text>` : ''}
-    <line x1="200" y1="266" x2="200" y2="244" stroke="#2A1820" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="200" y1="266" x2="200" y2="244" stroke="#4A3558" stroke-width="2.5" stroke-linecap="round"/>
     <g class="chama"><path d="M200 172 C217 198 219 220 210 234 C205 242 195 242 190 234 C181 220 184 198 200 172 Z" fill="url(#${id}l)"/><path d="M200 206 C206 216 206 226 202 232 C200 235 198 235 197 232 C194 226 195 216 200 206 Z" fill="#FFFDF6"/></g>
-    <path d="M140 244 L140 390" stroke="rgba(255,255,255,.3)" stroke-width="3" stroke-linecap="round"/>
-    ${texto ? '<text x="200" y="468" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11" letter-spacing="4" fill="rgba(243,230,214,.45)">FOTO EM BREVE</text>' : ''}
+    <path d="M140 244 L140 390" stroke="rgba(255,255,255,.9)" stroke-width="3" stroke-linecap="round"/>
+    ${texto ? '<text x="200" y="468" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11" letter-spacing="4" fill="rgba(111,79,160,.45)">FOTO EM BREVE</text>' : ''}
   </svg>`;
 }
 // Mantido para o PDF

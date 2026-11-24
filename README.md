@@ -1,6 +1,6 @@
 # Sonhos em Velas
 
-Loja online da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT). Visual editorial escuro e quente, com sacola e fechamento do pedido pelo WhatsApp.
+Loja online da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT). Visual claro e suave (lilás, rosa e creme, fontes Fraunces e Plus Jakarta Sans), com sacola e fechamento do pedido pelo WhatsApp.
 
 - **Site de apresentação** (`/`): topo com foto de capa (ou vela animada), coleções numeradas, nossa essência, destaques da semana, coleções em imagem, momentos de uso, galeria do ateliê, personalizadas, como pedir e contato. Menu em tela cheia no celular.
 - **Catálogo / loja** (`/catalogo`): abas por coleção, gaveta de filtros (busca, momento, ordenação, promoções), botão "+" para colocar na sacola, enviar catálogo no WhatsApp, copiar link e baixar PDF. Filtros viram link (`?categoria=`, `?momento=`).
