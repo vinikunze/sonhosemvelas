@@ -309,7 +309,7 @@ body::after {
   /* sem foto: a vela fica acima do texto, sem disputar a leitura */
   .hero:not(.hero--foto) { justify-content: flex-start; padding-top: calc(var(--topo-h) + 4px); }
   .hero:not(.hero--foto) .hero__arte { position: relative; inset: auto; z-index: 0; height: 27svh; min-height: 170px; padding: 0; place-items: center; margin-bottom: 6px; }
-  .hero:not(.hero--foto) .hero__arte svg { height: 100%; width: auto; }
+  .hero:not(.hero--foto) .hero__arte svg { height: 100%; width: auto; aspect-ratio: 4 / 5; overflow: hidden; }
   .hero:not(.hero--foto) .hero__arte::after { display: none; }
   .hero h1 { margin: 14px 0 14px; }
   .hero .lead { font-size: 14.5px; }
@@ -501,7 +501,7 @@ body::after {
 /* =========================================================
    CARD DE PRODUTO (loja)
    ========================================================= */
-.produto-card { position: relative; display: flex; flex-direction: column; min-width: 0; }
+.produto-card { position: relative; display: flex; flex-direction: column; min-width: 0; container-type: inline-size; }
 .produto-card__foto {
   position: relative; display: block; aspect-ratio: 4 / 5; border-radius: var(--raio); overflow: hidden; background: var(--fundo-3);
 }
@@ -520,7 +520,8 @@ body::after {
 .selo--ouro { background: var(--ouro); color: #1A1014; }
 .produto-card--esgotado .produto-card__foto img, .produto-card--esgotado .produto-card__foto svg { filter: grayscale(.7) brightness(.7); }
 .add-rapido {
-  position: absolute; right: 10px; bottom: 10px; z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: 0;
+  /* fica no canto de baixo da foto (foto = 4:5 da largura do card) */
+  position: absolute; right: 10px; top: calc(125cqw - 54px); z-index: 2; width: 44px; height: 44px; border-radius: 50%; border: 0;
   background: var(--creme); color: #1A1014; display: grid; place-items: center; cursor: pointer;
   box-shadow: 0 8px 20px rgba(0, 0, 0, .35); transition: transform .35s var(--ease), background-color .3s;
 }
@@ -725,4 +726,9 @@ body::after {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   .js .reveal, .js .reveal-img { opacity: 1; transform: none; clip-path: none; }
   .js .hero h1 .linha > span { transform: none; }
+}
+@media (max-width: 379px) {
+  .marca span { font-size: 18px; }
+  .marca img { width: 34px; height: 34px; }
+  .btn-menu { padding: 0 12px; gap: 8px; }
 }

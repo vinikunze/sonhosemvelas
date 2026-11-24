@@ -8,5 +8,14 @@
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
 
-/assets/*
-  Cache-Control: public, max-age=3600
+/assets/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/img/*
+  Cache-Control: public, max-age=86400
+
+/assets/vendor/*
+  Cache-Control: public, max-age=604800
