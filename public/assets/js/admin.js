@@ -103,10 +103,40 @@ async function carregar() {
     estado = await api('/api/admin/dados');
     renderProdutos();
     renderCategorias();
+    renderDestaques();
     preencherAjustes();
+    abrirPeloLink();
   } catch (err) {
     toast(err.message, true);
   }
+}
+
+// Links vindos do catálogo: /admin#produto=<id> abre a edição, /admin#novo abre um produto novo
+function abrirPeloLink() {
+  const h = location.hash;
+  if (!h) return;
+  history.replaceState(null, '', location.pathname);
+  if (h === '#novo') { abrirEditor(null); return; }
+  const m = h.match(/^#produto=(.+)$/);
+  if (m) {
+    const p = estado.produtos.find((x) => x.id === decodeURIComponent(m[1]));
+    if (p) abrirEditor(p);
+  }
+}
+
+// Mesmo cálculo do site: preço final, desconto e parcelas
+function infoPreco(p) {
+  const promo = p.promo_price_cents !== null && p.promo_price_cents !== undefined && p.price_cents !== null && p.promo_price_cents < p.price_cents;
+  const final = promo ? p.promo_price_cents : p.price_cents;
+  const n = Math.max(1, Number(p.installments) || 1);
+  return {
+    final,
+    de: promo ? p.price_cents : null,
+    desconto: promo ? Math.round((1 - p.promo_price_cents / p.price_cents) * 100) : 0,
+    parcelas: final !== null && final !== undefined && n > 1
+      ? (p.interest_free === false ? `em até ${n}x no cartão` : `ou ${n}x de ${precoTexto(Math.ceil(final / n))} sem juros`)
+      : '',
+  };
 }
 
 /* ---------------- Produtos ---------------- */
@@ -126,7 +156,8 @@ function renderProdutos() {
     const tags = [
       !p.visible && '<span class="tag tag--off">Escondido</span>',
       !p.available && '<span class="tag tag--esgotado">Esgotado</span>',
-      p.featured && '<span class="tag">Destaque</span>',
+      p.featured && '<span class="tag">★ Página inicial</span>',
+      infoPreco(p).desconto && `<span class="tag tag--promo">-${infoPreco(p).desconto}%</span>`,
       !p.images.length && '<span class="tag tag--off">Sem foto</span>',
     ].filter(Boolean).join('');
     return `<li class="item" data-id="${esc(p.id)}">
@@ -134,7 +165,7 @@ function renderProdutos() {
         ${foto}
         <span class="item__texto">
           <span class="item__nome">${esc(p.name)}</span>
-          <span class="item__meta">${esc(precoTexto(p.price_cents))}${p.category_name ? ' · ' + esc(p.category_name) : ''}</span>
+          <span class="item__meta">${esc(precoTexto(infoPreco(p).final))}${p.category_name ? ' · ' + esc(p.category_name) : ''}</span>
           ${tags ? `<span class="item__tags">${tags}</span>` : ''}
         </span>
       </button>
@@ -160,6 +191,7 @@ $('#lista-produtos').addEventListener('change', async (e) => {
   try {
     const { produto } = await api(`/api/admin/produtos/${sw.dataset.disponivel}`, { metodo: 'PATCH', corpo: { available: sw.checked } });
     substituirProduto(produto);
+    renderDestaques();
     toast(produto.available ? 'Marcado como disponível' : 'Marcado como esgotado');
   } catch (err) {
     sw.checked = !sw.checked;
@@ -205,7 +237,13 @@ function abrirEditor(p) {
   opcoesCategoria(p?.category_id || '');
 
   form.name.value = p?.name || '';
-  form.price.value = p && p.price_cents !== null ? (p.price_cents / 100).toFixed(2).replace('.', ',') : '';
+  const reais = (c) => (c !== null && c !== undefined ? (c / 100).toFixed(2).replace('.', ',') : '');
+  form.price.value = reais(p?.price_cents);
+  form.promo.value = reais(p?.promo_price_cents);
+  $('#select-parcelas').innerHTML = Array.from({ length: 12 }, (_, i) => i + 1)
+    .map((n) => `<option value="${n}">${n === 1 ? 'Só à vista' : `Até ${n}x`}</option>`).join('');
+  form.installments.value = String(p?.installments || 1);
+  form.interest_free.checked = p ? p.interest_free !== false : true;
   form.aroma.value = p?.aroma || '';
   form.size.value = p?.size || '';
   form.description.value = p?.description || '';
@@ -214,6 +252,7 @@ function abrirEditor(p) {
   form.visible.checked = p ? p.visible : true;
   fotos = (p?.images || []).map((key) => ({ key, url: fotoUrl(key) }));
   renderFotos();
+  previaPreco();
 
   editor.showModal();
   editor.scrollTop = 0;
@@ -221,6 +260,31 @@ function abrirEditor(p) {
 }
 
 form.addEventListener('input', () => (alterado = true));
+
+// Mostra para ela como o preço vai aparecer no site
+function previaPreco() {
+  const price = lerPreco(form.price.value);
+  const promo = lerPreco(form.promo.value);
+  const caixa = $('#previa-preco');
+  const info = $('#info-desconto');
+  info.textContent = 'Só se estiver em promoção';
+  if (Number.isNaN(price) || Number.isNaN(promo)) { caixa.textContent = ''; return; }
+  if (promo !== null && price !== null && promo >= price) {
+    caixa.innerHTML = '<strong>Atenção:</strong> o preço com desconto precisa ser menor que o normal.';
+    return;
+  }
+  const i = infoPreco({
+    price_cents: price, promo_price_cents: promo,
+    installments: Number(form.installments.value), interest_free: form.interest_free.checked,
+  });
+  if (i.desconto) info.textContent = `${i.desconto}% de desconto`;
+  if (i.final === null || i.final === undefined) { caixa.innerHTML = 'No site vai aparecer: <strong>Sob consulta</strong>'; return; }
+  caixa.innerHTML = `No site vai aparecer: ${i.de ? `<s>${precoTexto(i.de)}</s> ` : ''}<strong>${precoTexto(i.final)}</strong>${i.parcelas ? ` · ${esc(i.parcelas)}` : ''}`;
+}
+['price', 'promo', 'installments', 'interest_free'].forEach((n) => {
+  form[n].addEventListener('input', previaPreco);
+  form[n].addEventListener('change', previaPreco);
+});
 
 $('#select-categoria').addEventListener('change', async (e) => {
   if (e.target.value !== '__nova') return;
@@ -357,11 +421,18 @@ form.addEventListener('submit', async (e) => {
   if (!form.name.value.trim()) { erro.textContent = 'Dê um nome ao produto.'; form.name.focus(); return; }
   const price_cents = lerPreco(form.price.value);
   if (Number.isNaN(price_cents)) { erro.textContent = 'Preço inválido. Exemplo: 49,90'; form.price.focus(); return; }
+  const promo_price_cents = lerPreco(form.promo.value);
+  if (Number.isNaN(promo_price_cents)) { erro.textContent = 'Preço com desconto inválido. Exemplo: 39,90'; form.promo.focus(); return; }
+  if (promo_price_cents !== null && price_cents === null) { erro.textContent = 'Para dar desconto, preencha também o preço normal.'; form.price.focus(); return; }
+  if (promo_price_cents !== null && promo_price_cents >= price_cents) { erro.textContent = 'O preço com desconto precisa ser menor que o preço normal.'; form.promo.focus(); return; }
   if (fotos.some((f) => f.enviando)) { erro.textContent = 'Espere as fotos terminarem de enviar.'; return; }
 
   const dados = {
     name: form.name.value.trim(),
     price_cents,
+    promo_price_cents,
+    installments: Number(form.installments.value) || 1,
+    interest_free: form.interest_free.checked,
     category_id: form.category_id.value && form.category_id.value !== '__nova' ? form.category_id.value : null,
     aroma: form.aroma.value.trim(),
     size: form.size.value.trim(),
@@ -389,6 +460,7 @@ form.addEventListener('submit', async (e) => {
     estado = await api('/api/admin/dados');
     renderProdutos();
     renderCategorias();
+    renderDestaques();
     editor.close();
     toast(editando ? 'Produto atualizado!' : 'Produto cadastrado!');
   } catch (err) {
@@ -423,6 +495,7 @@ $('#apagar-produto').addEventListener('click', async () => {
     enviadasAgora = [];
     editor.close();
     renderProdutos();
+    renderDestaques();
     toast('Produto apagado');
   } catch (err) {
     toast(err.message, true);
@@ -505,6 +578,85 @@ $('#lista-categorias').addEventListener('click', async (e) => {
   }
 });
 
+/* ---------------- Página inicial (destaques) ---------------- */
+
+function destacados() {
+  return estado.produtos.filter((p) => p.featured).sort((a, b) => a.featured_position - b.featured_position);
+}
+
+function renderDestaques() {
+  const lista = destacados();
+  $('#lista-destaques').innerHTML = lista.length
+    ? lista.map((p, i) => `
+      <li class="destaque">
+        <span class="destaque__num">${i + 1}</span>
+        ${p.images[0] ? `<img class="destaque__foto" src="${fotoUrl(p.images[0])}" alt="" loading="lazy">` : '<span class="destaque__foto" aria-hidden="true">🕯️</span>'}
+        <span class="destaque__nome">${esc(p.name)}${p.visible ? '' : ' <small>(escondido)</small>'}</span>
+        <button type="button" class="icone" data-dest-mover="-1" data-i="${i}" aria-label="Subir" ${i === 0 ? 'disabled' : ''}>${ICONE.cima}</button>
+        <button type="button" class="icone" data-dest-mover="1" data-i="${i}" aria-label="Descer" ${i === lista.length - 1 ? 'disabled' : ''}>${ICONE.baixo}</button>
+        <button type="button" class="icone icone--perigo" data-dest-tirar="${esc(p.id)}" aria-label="Tirar dos destaques">${ICONE.apagar}</button>
+      </li>`).join('')
+    : '<p class="vazio">Nenhum destaque escolhido. Enquanto isso, o site mostra os primeiros produtos do catálogo.</p>';
+
+  const fora = estado.produtos.filter((p) => !p.featured && p.visible);
+  $('#add-destaque').innerHTML = `<option value="">${fora.length ? 'Escolha um produto...' : 'Todos os produtos já estão nos destaques'}</option>`
+    + fora.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+}
+
+async function marcarDestaque(id, ligado) {
+  const { produto } = await api(`/api/admin/produtos/${id}`, { metodo: 'PATCH', corpo: { featured: ligado } });
+  substituirProduto(produto);
+  renderDestaques();
+}
+
+$('#add-destaque').addEventListener('change', async (e) => {
+  const id = e.target.value;
+  if (!id) return;
+  e.target.disabled = true;
+  try { await marcarDestaque(id, true); toast('Adicionado à página inicial'); }
+  catch (err) { toast(err.message, true); }
+  finally { e.target.disabled = false; }
+});
+
+$('#lista-destaques').addEventListener('click', async (e) => {
+  const mover = e.target.closest('[data-dest-mover]');
+  const tirar = e.target.closest('[data-dest-tirar]');
+  try {
+    if (mover) {
+      const lista = destacados();
+      const i = Number(mover.dataset.i);
+      const j = i + Number(mover.dataset.destMover);
+      [lista[i], lista[j]] = [lista[j], lista[i]];
+      lista.forEach((p, k) => (p.featured_position = k + 1));
+      renderDestaques();
+      await api('/api/admin/ordem', { metodo: 'PUT', corpo: { tipo: 'destaques', ids: lista.map((p) => p.id) } });
+    } else if (tirar) {
+      await marcarDestaque(tirar.dataset.destTirar, false);
+      toast('Tirado da página inicial');
+    }
+  } catch (err) {
+    toast(err.message, true);
+    carregar();
+  }
+});
+
+$('#form-inicio').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const botao = f.querySelector('button[type=submit]');
+  botao.disabled = true;
+  try {
+    const corpo = { ...estado.settings, home_title: f.home_title.value, home_subtitle: f.home_subtitle.value };
+    await api('/api/admin/config', { metodo: 'PUT', corpo });
+    estado.settings = corpo;
+    toast('Título salvo!');
+  } catch (err) {
+    toast(err.message, true);
+  } finally {
+    botao.disabled = false;
+  }
+});
+
 /* ---------------- Ajustes ---------------- */
 
 function preencherAjustes() {
@@ -514,6 +666,9 @@ function preencherAjustes() {
   f.instagram.value = s.instagram || '';
   f.announcement.value = s.announcement || '';
   f.about.value = s.about || '';
+  const fi = $('#form-inicio');
+  fi.home_title.value = s.home_title || '';
+  fi.home_subtitle.value = s.home_subtitle || '';
 }
 
 $('#form-ajustes').addEventListener('submit', async (e) => {
@@ -522,7 +677,7 @@ $('#form-ajustes').addEventListener('submit', async (e) => {
   const botao = f.querySelector('button[type=submit]');
   botao.disabled = true;
   try {
-    const corpo = { whatsapp: f.whatsapp.value, instagram: f.instagram.value, announcement: f.announcement.value, about: f.about.value };
+    const corpo = { ...estado.settings, whatsapp: f.whatsapp.value, instagram: f.instagram.value, announcement: f.announcement.value, about: f.about.value };
     await api('/api/admin/config', { metodo: 'PUT', corpo });
     estado.settings = { ...corpo, whatsapp: corpo.whatsapp.replace(/\D/g, '') };
     toast('Ajustes salvos!');

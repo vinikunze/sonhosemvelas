@@ -82,6 +82,13 @@ export function apagarCookie(request) {
   return cookie(request, '', 0);
 }
 
+// Cookie visível ao JavaScript que só diz "esta pessoa costuma ser a administradora".
+// Não dá acesso a nada: serve para o catálogo mostrar os botões de edição sem consultar o servidor à toa.
+export function cookieDica(request, ligado) {
+  const seguro = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
+  return `sev_adm=${ligado ? '1' : ''}; Path=/; SameSite=Lax; Max-Age=${ligado ? DURACAO_S : 0}${seguro}`;
+}
+
 export async function sessaoValida(env, request, admin) {
   admin = admin ?? (await lerAdmin(env));
   if (!admin) return false;

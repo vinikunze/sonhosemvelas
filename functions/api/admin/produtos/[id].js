@@ -1,5 +1,5 @@
 import { json, erro, slugUnico, produtoDoBanco, SELECT_PRODUTO } from '../../../_lib/util.js';
-import { lerProduto, apagarFotos } from '../../../_lib/produto.js';
+import { lerProduto, apagarFotos, proximaPosicaoDestaque } from '../../../_lib/produto.js';
 
 async function buscar(env, id) {
   return env.DB.prepare('SELECT * FROM products WHERE id = ?1').bind(id).first();
@@ -13,13 +13,18 @@ export async function onRequestPut({ request, env, params }) {
   if (falha) return falha;
 
   const slug = dados.name === atual.name ? atual.slug : await slugUnico(env.DB, 'products', dados.name, atual.id);
+  const posDestaque = dados.featured
+    ? (atual.featured ? atual.featured_position : await proximaPosicaoDestaque(env.DB))
+    : 0;
   await env.DB.prepare(
-    `UPDATE products SET name = ?2, slug = ?3, description = ?4, price_cents = ?5, category_id = ?6, aroma = ?7, size = ?8,
-       images = ?9, available = ?10, featured = ?11, visible = ?12, updated_at = datetime('now')
+    `UPDATE products SET name = ?2, slug = ?3, description = ?4, price_cents = ?5, promo_price_cents = ?6, installments = ?7,
+       interest_free = ?8, category_id = ?9, aroma = ?10, size = ?11, images = ?12, available = ?13, featured = ?14,
+       featured_position = ?15, visible = ?16, updated_at = datetime('now')
      WHERE id = ?1`,
   ).bind(
-    atual.id, dados.name, slug, dados.description, dados.price_cents, dados.category_id, dados.aroma, dados.size,
-    JSON.stringify(dados.images), dados.available, dados.featured, dados.visible,
+    atual.id, dados.name, slug, dados.description, dados.price_cents, dados.promo_price_cents, dados.installments,
+    dados.interest_free, dados.category_id, dados.aroma, dados.size, JSON.stringify(dados.images), dados.available,
+    dados.featured, posDestaque, dados.visible,
   ).run();
 
   let antigas = [];
@@ -38,9 +43,14 @@ export async function onRequestPatch({ request, env, params }) {
   try { b = await request.json(); } catch { return erro('Dados inválidos'); }
   const campos = ['available', 'featured', 'visible'].filter((c) => typeof b[c] === 'boolean');
   if (!campos.length) return erro('Nada para alterar');
-  const sets = campos.map((c, i) => `${c} = ?${i + 2}`).join(', ');
-  await env.DB.prepare(`UPDATE products SET ${sets}, updated_at = datetime('now') WHERE id = ?1`)
-    .bind(atual.id, ...campos.map((c) => (b[c] ? 1 : 0))).run();
+  const sets = campos.map((c, i) => `${c} = ?${i + 2}`);
+  const valores = campos.map((c) => (b[c] ? 1 : 0));
+  if (campos.includes('featured') && b.featured !== !!atual.featured) {
+    sets.push(`featured_position = ?${valores.length + 2}`);
+    valores.push(b.featured ? await proximaPosicaoDestaque(env.DB) : 0);
+  }
+  await env.DB.prepare(`UPDATE products SET ${sets.join(', ')}, updated_at = datetime('now') WHERE id = ?1`)
+    .bind(atual.id, ...valores).run();
   const row = await env.DB.prepare(`${SELECT_PRODUTO} WHERE p.id = ?1`).bind(atual.id).first();
   return json({ produto: produtoDoBanco(row) });
 }

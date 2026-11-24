@@ -47,22 +47,67 @@ export function ilustracao(seed = '') {
   </svg>`;
 }
 
-export function cardProduto(p, i = 0) {
-  const valor = preco(p.price_cents);
+// Preço final, preço "de", % de desconto e texto do parcelamento
+export function precoInfo(p) {
+  const temPromo = p.promo_price_cents !== null && p.promo_price_cents !== undefined && p.price_cents !== null && p.promo_price_cents < p.price_cents;
+  const final = temPromo ? p.promo_price_cents : p.price_cents;
+  const n = Math.max(1, Number(p.installments) || 1);
+  let parcelas = '';
+  if (final !== null && final !== undefined && n > 1) {
+    parcelas = p.interest_free === false
+      ? `em até ${n}x no cartão`
+      : `ou ${n}x de ${preco(Math.ceil(final / n))} sem juros`;
+  }
+  return {
+    final,
+    de: temPromo ? p.price_cents : null,
+    desconto: temPromo ? Math.round((1 - p.promo_price_cents / p.price_cents) * 100) : 0,
+    parcelas,
+  };
+}
+
+export function precoHtml(p, classe = 'preco') {
+  const i = precoInfo(p);
+  if (i.final === null || i.final === undefined) return `<div class="${classe}"><span class="${classe}__consulta">Sob consulta</span></div>`;
+  return `<div class="${classe}">
+    ${i.de ? `<span class="${classe}__de">${preco(i.de)}</span>` : ''}
+    <span class="${classe}__valor">${preco(i.final)}${i.desconto ? ` <span class="${classe}__off">-${i.desconto}%</span>` : ''}</span>
+    ${i.parcelas ? `<span class="${classe}__parcelas">${i.parcelas}</span>` : ''}
+  </div>`;
+}
+
+export function cardProduto(p, i = 0, { admin = false } = {}) {
+  const info = precoInfo(p);
   const foto = p.images[0]
     ? `<img src="${fotoUrl(p.images[0])}" alt="${esc(p.name)}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async" width="400" height="500">`
     : ilustracao(p.slug);
   const etiqueta = !p.available
     ? '<span class="etiqueta etiqueta--esgotado">Esgotado</span>'
+    : info.desconto ? `<span class="etiqueta etiqueta--promo">-${info.desconto}%</span>`
     : p.featured ? '<span class="etiqueta">Destaque</span>' : '';
-  return `<a class="card${p.available ? '' : ' card--esgotado'}" href="/p/${encodeURIComponent(p.slug)}" style="animation-delay:${Math.min(i, 12) * 40}ms">
+  const card = `<a class="card${p.available ? '' : ' card--esgotado'}" href="/p/${encodeURIComponent(p.slug)}" style="animation-delay:${Math.min(i, 12) * 40}ms">
     <div class="card__foto">${etiqueta}${foto}</div>
     <div class="card__corpo">
+      ${p.category_name ? `<p class="card__cat">${esc(p.category_name)}</p>` : ''}
       <h3 class="card__nome">${esc(p.name)}</h3>
       ${p.aroma ? `<p class="card__aroma">${esc(p.aroma)}</p>` : ''}
-      <p class="card__preco${valor ? '' : ' card__preco--consulta'}">${valor || 'Sob consulta'}</p>
+      ${precoHtml(p, 'card__preco')}
     </div>
   </a>`;
+  if (!admin) return card;
+  return `<div class="card-wrap">${card}<a class="card__editar" href="/admin#produto=${encodeURIComponent(p.id)}">Editar</a></div>`;
+}
+
+export function telefoneBonito(numero) {
+  const d = String(numero || WPP_PADRAO).replace(/\D/g, '').replace(/^55/, '');
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return d;
+}
+
+// A administradora já entrou no painel neste aparelho? (só para mostrar botões; o servidor confere de verdade)
+export function pareceAdmin() {
+  return /(?:^|;\s*)sev_adm=1/.test(document.cookie);
 }
 
 // Liga todos os botões de WhatsApp da página ao número configurado
@@ -88,16 +133,22 @@ export function mostrarAviso(texto) {
   if (texto) { el.textContent = texto; el.hidden = false; } else el.hidden = true;
 }
 
+// Revela elementos .reveal quando entram na tela (pode ser chamado de novo para conteúdo novo)
+let io = null;
+export function revelar(raiz = document) {
+  if (!io && 'IntersectionObserver' in window) {
+    io = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-visivel'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  }
+  raiz.querySelectorAll('.reveal:not(.is-visivel)').forEach((el) => (io ? io.observe(el) : el.classList.add('is-visivel')));
+}
+
 // Animações de entrada, topo com fundo ao rolar e botão flutuante
 export function efeitos() {
-  const io = 'IntersectionObserver' in window
-    ? new IntersectionObserver((entradas) => {
-        entradas.forEach((e) => {
-          if (e.isIntersecting) { e.target.classList.add('is-visivel'); io.unobserve(e.target); }
-        });
-      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 })
-    : null;
-  document.querySelectorAll('.reveal').forEach((el) => (io ? io.observe(el) : el.classList.add('is-visivel')));
+  revelar();
 
   const topo = document.getElementById('topo');
   const flutuante = document.querySelector('.wpp-flutuante');

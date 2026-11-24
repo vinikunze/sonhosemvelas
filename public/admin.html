@@ -46,7 +46,7 @@
         <img src="/assets/img/logo.png" alt="" width="36" height="36">
         <span>Sonhos em Velas</span>
       </a>
-      <a class="barra__link" href="/" target="_blank" rel="noopener">Ver site ↗</a>
+      <a class="barra__link" href="/catalogo" target="_blank" rel="noopener">Ver catálogo ↗</a>
       <button class="barra__link" type="button" id="sair">Sair</button>
     </header>
 
@@ -80,6 +80,33 @@
           <button class="btn" type="submit">Adicionar</button>
         </form>
         <ul class="lista lista--cats" id="lista-categorias"></ul>
+      </section>
+
+      <!-- Página inicial -->
+      <section class="aba" id="aba-inicio" data-aba="inicio" hidden>
+        <div class="aba__cab">
+          <h1>Página inicial</h1>
+          <p class="aba__info">Escolha os produtos que aparecem em destaque no começo do site. Use as setas para mudar a ordem.</p>
+        </div>
+        <form class="cartao form" id="form-inicio">
+          <label class="campo">
+            <span>Título da seção</span>
+            <input type="text" name="home_title" maxlength="80" placeholder="Destaques da semana">
+          </label>
+          <label class="campo">
+            <span>Frase abaixo do título</span>
+            <input type="text" name="home_subtitle" maxlength="200" placeholder="As velas escolhidas a dedo para esta semana.">
+          </label>
+          <button class="btn btn--bloco" type="submit">Salvar título</button>
+        </form>
+        <div class="cartao">
+          <h2 class="form__titulo">Produtos em destaque</h2>
+          <ul class="lista lista--destaques" id="lista-destaques"></ul>
+          <label class="campo campo--add">
+            <span>Adicionar aos destaques</span>
+            <select id="add-destaque"></select>
+          </label>
+        </div>
       </section>
 
       <!-- Ajustes -->
@@ -142,6 +169,10 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v6H4zM13 14h7v6h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
         Categorias
       </button>
+      <button type="button" data-ir="inicio">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Destaques
+      </button>
       <button type="button" data-ir="ajustes">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         Ajustes
@@ -173,16 +204,36 @@
           <input type="text" name="name" maxlength="120" required placeholder="Ex.: Vela Lavanda Serena">
         </label>
 
-        <div class="duas">
-          <label class="campo">
-            <span>Preço (R$)</span>
-            <input type="text" name="price" inputmode="decimal" placeholder="49,90">
-            <small>Vazio = "sob consulta"</small>
-          </label>
-          <label class="campo">
-            <span>Categoria</span>
-            <select name="category_id" id="select-categoria"></select>
-          </label>
+        <label class="campo">
+          <span>Tipo de vela (categoria)</span>
+          <select name="category_id" id="select-categoria"></select>
+        </label>
+
+        <div class="cartao bloco-preco">
+          <h3 class="bloco__titulo">Preço e pagamento</h3>
+          <div class="duas">
+            <label class="campo">
+              <span>Preço normal (R$)</span>
+              <input type="text" name="price" inputmode="decimal" placeholder="49,90">
+              <small>Vazio = "sob consulta"</small>
+            </label>
+            <label class="campo">
+              <span>Preço com desconto (R$)</span>
+              <input type="text" name="promo" inputmode="decimal" placeholder="Sem promoção">
+              <small id="info-desconto">Só se estiver em promoção</small>
+            </label>
+          </div>
+          <div class="duas duas--meio">
+            <label class="campo">
+              <span>Parcelamento</span>
+              <select name="installments" id="select-parcelas"></select>
+            </label>
+            <label class="interruptor interruptor--compacto">
+              <span><strong>Sem juros</strong></span>
+              <input type="checkbox" name="interest_free" checked>
+            </label>
+          </div>
+          <p class="previa-preco" id="previa-preco" aria-live="polite"></p>
         </div>
 
         <div class="duas">
@@ -207,7 +258,7 @@
             <input type="checkbox" name="available" checked>
           </label>
           <label class="interruptor">
-            <span><strong>Destaque</strong><small>Aparece primeiro no catálogo</small></span>
+            <span><strong>Destaque da semana</strong><small>Aparece na página inicial do site</small></span>
             <input type="checkbox" name="featured">
           </label>
           <label class="interruptor">

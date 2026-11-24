@@ -15,7 +15,8 @@ export async function onRequestGet({ request, env, params }) {
 
   const p = produtoDoBanco(row);
   const titulo = `${p.name} | Sonhos em Velas`;
-  const desc = [preco(p.price_cents), p.aroma && `Aroma: ${p.aroma}`, p.description].filter(Boolean).join(' · ').slice(0, 200);
+  const precoFinal = p.promo_price_cents ?? p.price_cents;
+  const desc = [p.promo_price_cents != null ? `De ${preco(p.price_cents)} por ${preco(precoFinal)}` : preco(precoFinal), p.aroma && `Aroma: ${p.aroma}`, p.description].filter(Boolean).join(' · ').slice(0, 200);
   const imagem = p.images[0] ? `${url.origin}/fotos/${p.images[0]}` : `${url.origin}/assets/img/og.jpg`;
   const canonical = `${url.origin}/p/${p.slug}`;
 

@@ -1,5 +1,5 @@
 // Página de um produto: galeria, detalhes, pedido pelo WhatsApp e sugestões
-import { esc, preco, linkWpp, fotoUrl, ilustracao, cardProduto, efeitos, ligarWpp, ligarInsta, mostrarAviso, toast } from './comum.js';
+import { esc, preco, precoInfo, precoHtml, linkWpp, fotoUrl, ilustracao, cardProduto, efeitos, ligarWpp, ligarInsta, mostrarAviso, toast } from './comum.js';
 
 const main = document.getElementById('conteudo');
 const barra = document.getElementById('barra-pedido');
@@ -10,7 +10,8 @@ ligarWpp();
 const slug = window.__PRODUTO_SLUG__ || decodeURIComponent(location.pathname.split('/').filter(Boolean)[1] || '');
 
 function mensagem(p, url) {
-  const valor = preco(p.price_cents);
+  const info = precoInfo(p);
+  const valor = preco(info.final);
   if (!p.available) {
     return `Olá! Vi no catálogo que a *${p.name}* está esgotada. Pode me avisar quando voltar?\n\n${url}`;
   }
@@ -20,7 +21,8 @@ function mensagem(p, url) {
     `*${p.name}*`,
     p.aroma ? `Aroma: ${p.aroma}` : null,
     p.size ? `Tamanho: ${p.size}` : null,
-    valor ? `Valor: ${valor}` : null,
+    valor ? `Valor: ${valor}${info.de ? ` (promoção, de ${preco(info.de)})` : ''}` : null,
+    info.parcelas ? `Pagamento: ${info.parcelas.replace(/^ou /, '')}` : null,
     '',
     url,
   ].filter((l) => l !== null).join('\n');
@@ -67,9 +69,10 @@ function schema(p, url) {
     brand: { '@type': 'Brand', name: 'Sonhos em Velas' },
     url,
   };
-  if (p.price_cents !== null) {
+  const final = precoInfo(p).final;
+  if (final !== null && final !== undefined) {
     dados.offers = {
-      '@type': 'Offer', priceCurrency: 'BRL', price: (p.price_cents / 100).toFixed(2),
+      '@type': 'Offer', priceCurrency: 'BRL', price: (final / 100).toFixed(2),
       availability: p.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     };
   }
@@ -81,7 +84,7 @@ function schema(p, url) {
 
 function render({ produto: p, settings: s, relacionados }) {
   const url = `${location.origin}/p/${p.slug}`;
-  const valor = preco(p.price_cents);
+  const valor = preco(precoInfo(p).final);
   const wpp = linkWpp(s.whatsapp, mensagem(p, url));
   const rotulo = p.available ? 'Pedir pelo WhatsApp' : 'Avise-me quando voltar';
 
@@ -95,8 +98,8 @@ function render({ produto: p, settings: s, relacionados }) {
   main.innerHTML = `
     <article class="produto">
       <nav class="migalha" aria-label="Você está em">
-        <a href="/">Início</a><span aria-hidden="true">/</span>
-        ${p.category_slug ? `<a href="/?categoria=${encodeURIComponent(p.category_slug)}#catalogo">${esc(p.category_name)}</a><span aria-hidden="true">/</span>` : ''}
+        <a href="/catalogo">Catálogo</a><span aria-hidden="true">/</span>
+        ${p.category_slug ? `<a href="/catalogo?categoria=${encodeURIComponent(p.category_slug)}">${esc(p.category_name)}</a><span aria-hidden="true">/</span>` : ''}
         <span aria-current="page">${esc(p.name)}</span>
       </nav>
       <div class="produto__grid">
@@ -104,7 +107,7 @@ function render({ produto: p, settings: s, relacionados }) {
         <div class="produto__info">
           ${p.category_name ? `<p class="produto__cat">${esc(p.category_name)}</p>` : ''}
           <h1>${esc(p.name)}</h1>
-          <p class="produto__preco${valor ? '' : ' produto__preco--consulta'}">${valor || 'Valor sob consulta'}</p>
+          ${precoHtml(p, 'produto__preco')}
           <p class="produto__status${p.available ? '' : ' produto__status--off'}">${p.available ? 'Disponível para pedido' : 'Esgotado no momento'}</p>
           ${ficha.length ? `<ul class="produto__ficha">${ficha.map(([k, v]) => `<li><span>${k}</span><strong>${esc(v)}</strong></li>`).join('')}</ul>` : '<div style="height:24px"></div>'}
           ${p.description ? `<p class="produto__desc">${esc(p.description)}</p>` : ''}
@@ -165,7 +168,7 @@ function naoEncontrado() {
     <div class="nao-encontrado">
       <h1>Produto não encontrado</h1>
       <p>Ele pode ter saído do catálogo. Que tal ver as outras velas?</p>
-      <a class="btn" href="/#catalogo">Ver catálogo</a>
+      <a class="btn" href="/catalogo">Ver catálogo</a>
     </div>`;
 }
 

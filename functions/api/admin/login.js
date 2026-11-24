@@ -1,5 +1,5 @@
 import { json, erro } from '../../_lib/util.js';
-import { criarCookie, iguais, normalizarUsuario, lerAdmin, conferirSenha } from '../../_lib/sessao.js';
+import { criarCookie, cookieDica, iguais, normalizarUsuario, lerAdmin, conferirSenha } from '../../_lib/sessao.js';
 
 const MAX_TENTATIVAS = 8;
 const JANELA_S = 15 * 60;
@@ -29,7 +29,10 @@ export async function onRequestPost({ request, env }) {
 
   if (usuario && senha && usuarioOk && senhaOk) {
     await env.DB.prepare('DELETE FROM login_attempts WHERE ip = ?1').bind(ip).run();
-    return json({ ok: true }, 200, { 'set-cookie': await criarCookie(admin, request) });
+    const resp = json({ ok: true });
+    resp.headers.append('set-cookie', await criarCookie(admin, request));
+    resp.headers.append('set-cookie', cookieDica(request, true));
+    return resp;
   }
 
   if (!tent || agora - tent.first_at >= JANELA_S) {

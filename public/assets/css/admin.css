@@ -225,3 +225,27 @@ input[type="checkbox"].sw:checked::after, .interruptor input[type="checkbox"]:ch
 }
 .aviso-toast.is-visivel { opacity: 1; transform: translate(-50%, 0); }
 .aviso-toast.is-erro { background: var(--vermelho); }
+
+/* Preço e pagamento */
+.bloco-preco { padding: 16px 16px 6px; margin-bottom: 18px; }
+.bloco__titulo { font-family: var(--fonte-titulo); font-weight: 500; font-size: 19px; color: var(--ameixa-900); margin: 0 0 12px; }
+.duas--meio { align-items: center; }
+.interruptor--compacto { padding: 0; margin-top: 10px; }
+.previa-preco { font-size: 13.5px; color: var(--suave); background: var(--rosa-100); border-radius: 10px; padding: 10px 12px; margin: 0 0 12px; line-height: 1.45; }
+.previa-preco:empty { display: none; }
+.previa-preco strong { color: var(--ameixa-900); }
+.previa-preco s { opacity: .7; }
+
+/* 4 abas no rodapé */
+.abas { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 760px) { .abas { width: 500px; } }
+
+/* Lista de destaques */
+.lista--destaques { margin-bottom: 16px; }
+.destaque { display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid var(--linha); border-radius: 14px; background: var(--branco); }
+.destaque__num { width: 26px; text-align: center; font-weight: 700; color: var(--rosa-600); flex: none; }
+.destaque__foto { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--rosa-100); flex: none; display: grid; place-items: center; }
+.destaque__nome { flex: 1; min-width: 0; font-weight: 600; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.destaque .icone { width: 36px; height: 36px; }
+.campo--add { margin-bottom: 4px; }
+.tag--promo { background: #FCE4EE; color: var(--rosa-600); }

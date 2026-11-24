@@ -1,9 +1,11 @@
 # Sonhos em Velas
 
-Site catálogo da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT), com painel para cadastrar produtos.
+Site da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT), com catálogo e painel para cadastrar produtos.
 
-- **Site público** (`/`): catálogo com busca e categorias, página de cada produto (`/p/nome-do-produto`) e pedido pelo WhatsApp com mensagem pronta.
-- **Painel** (`/admin`): login por senha, cadastro de produtos com fotos (reduzidas automaticamente no celular), categorias e ajustes do site (WhatsApp, Instagram, aviso no topo, texto "Sobre").
+- **Site de apresentação** (`/`): topo com movimento, destaques da semana (escolhidos no painel), tipos de vela, como pedir e sobre.
+- **Catálogo** (`/catalogo`): página separada para enviar às clientes. Tem busca, filtro por tipo de vela, ordenação, preço com desconto e parcelamento, botão para enviar o link no WhatsApp e **Baixar PDF** (gerado no navegador, respeitando o filtro escolhido). O link de uma categoria (`/catalogo?categoria=velas-gruta`) abre o catálogo já filtrado.
+- **Página de cada produto** (`/p/nome-do-produto`): fotos, preço, parcelas e pedido pelo WhatsApp com mensagem pronta.
+- **Painel** (`/admin`): produtos (fotos, tipo de vela, preço normal e com desconto, parcelamento), categorias, destaques da página inicial (com ordem) e ajustes. Quando a administradora está logada, o catálogo mostra um botão **Editar** em cada produto.
 
 ## Como funciona
 
@@ -15,6 +17,7 @@ Tudo roda na Cloudflare, no plano gratuito:
 | API e páginas de produto | Worker | `src/worker.js` (rotas) e `functions/` (cada rota) |
 | Produtos, categorias, ajustes, acesso ao painel | D1 (banco SQLite) | `migrations/` |
 | Fotos | KV | enviadas pelo painel, servidas em `/fotos/...` |
+| PDF do catálogo | jsPDF (`public/assets/vendor/`) | `public/assets/js/pdf.js` |
 
 Não há etapa de build: HTML, CSS e JavaScript puros. O `wrangler.jsonc` já aponta para o banco D1 e o KV de produção.
 

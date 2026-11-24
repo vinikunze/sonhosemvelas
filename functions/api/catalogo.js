@@ -3,7 +3,7 @@ import { json, produtoDoBanco, SELECT_PRODUTO, ORDEM_PRODUTO } from '../_lib/uti
 // GET /api/catalogo : tudo que o site público precisa numa chamada só
 export async function onRequestGet({ env }) {
   const [settings, categorias, produtos] = await env.DB.batch([
-    env.DB.prepare('SELECT whatsapp, instagram, announcement, about FROM settings WHERE id = 1'),
+    env.DB.prepare('SELECT whatsapp, instagram, announcement, about, home_title, home_subtitle FROM settings WHERE id = 1'),
     env.DB.prepare('SELECT id, name, slug FROM categories ORDER BY position, name'),
     env.DB.prepare(`${SELECT_PRODUTO} WHERE p.visible = 1 ${ORDEM_PRODUTO}`),
   ]);
