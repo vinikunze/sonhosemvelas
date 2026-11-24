@@ -8,7 +8,7 @@ export async function onRequest(context) {
   const url = new URL(request.url);
 
   if (!configurado(env)) {
-    return erro('Painel ainda não configurado: defina ADMIN_PASSWORD e SESSION_SECRET na Cloudflare.', 503);
+    return erro('Painel ainda não configurado: defina ADMIN_USER, ADMIN_PASSWORD e SESSION_SECRET na Cloudflare.', 503);
   }
 
   // Toda escrita precisa vir do próprio painel (cabeçalho extra força checagem do navegador)

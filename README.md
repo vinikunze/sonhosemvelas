@@ -25,7 +25,7 @@ npm install
 ```
 
 ```bash
-printf 'ADMIN_PASSWORD=teste123\nSESSION_SECRET=um-texto-aleatorio-bem-longo\n' > .dev.vars
+printf 'ADMIN_USER=teste\nADMIN_PASSWORD=teste123\nSESSION_SECRET=um-texto-aleatorio-bem-longo\n' > .dev.vars
 ```
 
 ```bash
@@ -36,7 +36,7 @@ npm run db:local
 npm run dev
 ```
 
-Abra http://localhost:8788 (site) e http://localhost:8788/admin (painel, senha `teste123`).
+Abra http://localhost:8788 (site) e http://localhost:8788/admin (painel, usuário `teste`, senha `teste123`).
 
 ## Publicar na Cloudflare (primeira vez)
 
@@ -70,6 +70,10 @@ npm run deploy
 5. Definir os segredos do painel (o comando pede o valor):
 
 ```bash
+npx wrangler pages secret put ADMIN_USER
+```
+
+```bash
 npx wrangler pages secret put ADMIN_PASSWORD
 ```
 
@@ -79,12 +83,13 @@ npx wrangler pages secret put SESSION_SECRET
 
 Depois de mudar segredos, publique de novo (`npm run deploy`) para valerem.
 
-## Trocar a senha do painel
+## Trocar usuário ou senha do painel
 
-Rode `npx wrangler pages secret put ADMIN_PASSWORD` com a nova senha e publique de novo. Todas as sessões abertas são encerradas automaticamente.
+Rode `npx wrangler pages secret put ADMIN_USER` ou `npx wrangler pages secret put ADMIN_PASSWORD` com o novo valor e publique de novo. Todas as sessões abertas são encerradas automaticamente.
 
 ## Segurança
 
+- Login com usuário e senha (o usuário não diferencia maiúsculas de minúsculas).
 - O painel usa um cookie de sessão assinado (HttpOnly, SameSite=Strict, 30 dias).
 - Depois de 8 senhas erradas, o login fica bloqueado por 15 minutos para aquele IP.
 - Toda alteração exige sessão válida e um cabeçalho próprio do painel.

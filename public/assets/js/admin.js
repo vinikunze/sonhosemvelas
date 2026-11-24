@@ -48,7 +48,7 @@ function mostrarLogin() {
   $('#app').hidden = true;
   $('#tela-login').hidden = false;
   if ($('#editor').open) $('#editor').close();
-  setTimeout(() => $('#senha').focus(), 50);
+  setTimeout(() => ($('#usuario').value ? $('#senha') : $('#usuario')).focus(), 50);
 }
 
 async function entrarNoPainel() {
@@ -70,7 +70,7 @@ $('#form-login').addEventListener('submit', async (e) => {
   botao.disabled = true;
   $('#erro-login').textContent = '';
   try {
-    await api('/api/admin/login', { metodo: 'POST', corpo: { senha: $('#senha').value } });
+    await api('/api/admin/login', { metodo: 'POST', corpo: { usuario: $('#usuario').value, senha: $('#senha').value } });
     $('#senha').value = '';
     await entrarNoPainel();
   } catch (err) {

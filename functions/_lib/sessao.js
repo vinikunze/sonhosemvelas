@@ -1,5 +1,6 @@
 // Sessão do painel: cookie assinado com HMAC-SHA256
 // Segredos necessários (Cloudflare > Pages > Configurações > Variáveis):
+//   ADMIN_USER      usuário do painel
 //   ADMIN_PASSWORD  senha do painel
 //   SESSION_SECRET  texto aleatório longo para assinar o cookie
 
@@ -33,14 +34,23 @@ export async function iguais(a, b, secret) {
   return diff === 0;
 }
 
+// Usuário e senha entram na chave: trocar qualquer um derruba as sessões antigas
+function chaveSessao(env) {
+  return `${env.SESSION_SECRET}|${normalizarUsuario(env.ADMIN_USER)}|${env.ADMIN_PASSWORD}`;
+}
+
+export function normalizarUsuario(u) {
+  return String(u || '').trim().toLowerCase();
+}
+
 export function configurado(env) {
-  return !!(env.ADMIN_PASSWORD && env.SESSION_SECRET && env.SESSION_SECRET.length >= 16);
+  return !!(env.ADMIN_USER && env.ADMIN_PASSWORD && env.SESSION_SECRET && env.SESSION_SECRET.length >= 16);
 }
 
 export async function criarCookie(env, request) {
   const exp = Math.floor(Date.now() / 1000) + DURACAO_S;
   const payload = `v1.${exp}`;
-  const sig = await assinar(env.SESSION_SECRET + '|' + env.ADMIN_PASSWORD, payload);
+  const sig = await assinar(chaveSessao(env), payload);
   const seguro = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
   return `${COOKIE}=${payload}.${sig}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${DURACAO_S}${seguro}`;
 }
@@ -59,7 +69,6 @@ export async function sessaoValida(env, request) {
   if (partes.length !== 3 || partes[0] !== 'v1') return false;
   const exp = Number(partes[1]);
   if (!Number.isFinite(exp) || exp < Date.now() / 1000) return false;
-  // A senha entra na chave: trocar a senha derruba todas as sessões antigas
-  const esperado = await assinar(env.SESSION_SECRET + '|' + env.ADMIN_PASSWORD, `v1.${exp}`);
+  const esperado = await assinar(chaveSessao(env), `v1.${exp}`);
   return iguais(esperado, partes[2], env.SESSION_SECRET);
 }

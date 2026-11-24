@@ -1,5 +1,5 @@
 import { json, erro } from '../../_lib/util.js';
-import { criarCookie, iguais } from '../../_lib/sessao.js';
+import { criarCookie, iguais, normalizarUsuario } from '../../_lib/sessao.js';
 
 const MAX_TENTATIVAS = 8;
 const JANELA_S = 15 * 60;
@@ -16,9 +16,14 @@ export async function onRequestPost({ request, env }) {
 
   let body = {};
   try { body = await request.json(); } catch { /* vazio */ }
+  const usuario = normalizarUsuario(body.usuario);
   const senha = String(body.senha || '');
+  const [usuarioOk, senhaOk] = await Promise.all([
+    iguais(usuario, normalizarUsuario(env.ADMIN_USER), env.SESSION_SECRET),
+    iguais(senha, env.ADMIN_PASSWORD, env.SESSION_SECRET),
+  ]);
 
-  if (senha && (await iguais(senha, env.ADMIN_PASSWORD, env.SESSION_SECRET))) {
+  if (usuario && senha && usuarioOk && senhaOk) {
     await env.DB.prepare('DELETE FROM login_attempts WHERE ip = ?1').bind(ip).run();
     return json({ ok: true }, 200, { 'set-cookie': await criarCookie(env, request) });
   }
@@ -28,5 +33,5 @@ export async function onRequestPost({ request, env }) {
   } else {
     await env.DB.prepare('UPDATE login_attempts SET count = count + 1 WHERE ip = ?1').bind(ip).run();
   }
-  return erro('Senha incorreta', 401);
+  return erro('Usuário ou senha incorretos', 401);
 }
