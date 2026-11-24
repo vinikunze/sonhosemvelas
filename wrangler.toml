@@ -5,9 +5,9 @@ compatibility_date = "2026-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "sonhosemvelas"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "309a0bd1-ca10-43a5-9e00-93a9f2b3f6bc"
 migrations_dir = "migrations"
 
-[[r2_buckets]]
+[[kv_namespaces]]
 binding = "FOTOS"
-bucket_name = "sonhosemvelas-fotos"
+id = "6840fe1d9c3e49e88a9ef5bb1b9bfa61"

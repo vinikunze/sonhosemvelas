@@ -108,6 +108,24 @@
           </label>
           <button class="btn btn--bloco" type="submit">Salvar ajustes</button>
         </form>
+        <form class="cartao form" id="form-senha" autocomplete="on">
+          <h2 class="form__titulo">Trocar senha</h2>
+          <input type="text" name="username" autocomplete="username" hidden>
+          <label class="campo">
+            <span>Senha atual</span>
+            <input type="password" name="atual" autocomplete="current-password" required>
+          </label>
+          <label class="campo">
+            <span>Nova senha</span>
+            <input type="password" name="nova" autocomplete="new-password" minlength="8" required>
+            <small>Pelo menos 8 caracteres.</small>
+          </label>
+          <label class="campo">
+            <span>Repita a nova senha</span>
+            <input type="password" name="repetir" autocomplete="new-password" minlength="8" required>
+          </label>
+          <button class="btn btn--bloco" type="submit">Trocar senha</button>
+        </form>
         <div class="cartao dica">
           <h2>Dica</h2>
           <p>Para mandar um produto para uma cliente, abra o produto no site e toque em <strong>Compartilhar</strong>. O link vai com a foto e o nome.</p>

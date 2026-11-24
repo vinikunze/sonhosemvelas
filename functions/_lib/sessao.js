@@ -1,74 +1,95 @@
-// Sessão do painel: cookie assinado com HMAC-SHA256
-// Segredos necessários (Cloudflare > Pages > Configurações > Variáveis):
-//   ADMIN_USER      usuário do painel
-//   ADMIN_PASSWORD  senha do painel
-//   SESSION_SECRET  texto aleatório longo para assinar o cookie
+// Acesso ao painel: usuário e senha guardados na tabela "admin" do banco.
+// A senha fica como hash PBKDF2-SHA256; a sessão é um cookie assinado com HMAC.
+// Para definir o acesso: node scripts/definir-acesso.mjs <usuario> <senha>
 
 const COOKIE = 'sev_sessao';
 const DURACAO_S = 60 * 60 * 24 * 30; // 30 dias
+export const ITERACOES = 100000; // máximo aceito pelo PBKDF2 dos Workers
 
 const enc = new TextEncoder();
 
-function b64url(buf) {
-  const bytes = new Uint8Array(buf);
+function b64(buf) {
   let s = '';
-  for (const b of bytes) s += String.fromCharCode(b);
-  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  for (const b of new Uint8Array(buf)) s += String.fromCharCode(b);
+  return btoa(s);
+}
+function b64url(buf) {
+  return b64(buf).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function deB64(s) {
+  return Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 }
 
-async function chave(secret) {
-  return crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
-}
-
-async function assinar(secret, texto) {
-  const k = await chave(secret);
+async function hmac(chave, texto) {
+  const k = await crypto.subtle.importKey('raw', enc.encode(chave), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   return b64url(await crypto.subtle.sign('HMAC', k, enc.encode(texto)));
 }
 
-// Comparação em tempo constante via HMAC dos dois lados
-export async function iguais(a, b, secret) {
-  const [ha, hb] = await Promise.all([assinar(secret, 'cmp:' + a), assinar(secret, 'cmp:' + b)]);
-  if (ha.length !== hb.length) return false;
-  let diff = 0;
-  for (let i = 0; i < ha.length; i++) diff |= ha.charCodeAt(i) ^ hb.charCodeAt(i);
+// Comparação em tempo constante (compara HMACs dos dois valores)
+export async function iguais(a, b) {
+  const chave = 'comparacao';
+  const [ha, hb] = await Promise.all([hmac(chave, String(a)), hmac(chave, String(b))]);
+  let diff = ha.length ^ hb.length;
+  for (let i = 0; i < Math.min(ha.length, hb.length); i++) diff |= ha.charCodeAt(i) ^ hb.charCodeAt(i);
   return diff === 0;
-}
-
-// Usuário e senha entram na chave: trocar qualquer um derruba as sessões antigas
-function chaveSessao(env) {
-  return `${env.SESSION_SECRET}|${normalizarUsuario(env.ADMIN_USER)}|${env.ADMIN_PASSWORD}`;
 }
 
 export function normalizarUsuario(u) {
   return String(u || '').trim().toLowerCase();
 }
 
-export function configurado(env) {
-  return !!(env.ADMIN_USER && env.ADMIN_PASSWORD && env.SESSION_SECRET && env.SESSION_SECRET.length >= 16);
+export async function hashSenha(senha, saltB64, iteracoes = ITERACOES) {
+  const base = await crypto.subtle.importKey('raw', enc.encode(senha), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: deB64(saltB64), iterations: iteracoes },
+    base,
+    256,
+  );
+  return b64(bits);
 }
 
-export async function criarCookie(env, request) {
+export function aleatorio(bytes = 32) {
+  return b64(crypto.getRandomValues(new Uint8Array(bytes)));
+}
+
+export async function lerAdmin(env) {
+  return env.DB.prepare('SELECT * FROM admin WHERE id = 1').first();
+}
+
+export async function conferirSenha(admin, senha) {
+  if (!admin) return false;
+  const h = await hashSenha(senha, admin.pass_salt, admin.iterations);
+  return iguais(h, admin.pass_hash);
+}
+
+// A chave da sessão depende do hash da senha: trocar a senha derruba as sessões antigas
+function chaveSessao(admin) {
+  return `${admin.session_secret}|${admin.pass_hash}`;
+}
+
+function cookie(request, valor, maxAge) {
+  const seguro = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
+  return `${COOKIE}=${valor}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${seguro}`;
+}
+
+export async function criarCookie(admin, request) {
   const exp = Math.floor(Date.now() / 1000) + DURACAO_S;
   const payload = `v1.${exp}`;
-  const sig = await assinar(chaveSessao(env), payload);
-  const seguro = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
-  return `${COOKIE}=${payload}.${sig}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${DURACAO_S}${seguro}`;
+  return cookie(request, `${payload}.${await hmac(chaveSessao(admin), payload)}`, DURACAO_S);
 }
 
 export function apagarCookie(request) {
-  const seguro = new URL(request.url).protocol === 'https:' ? '; Secure' : '';
-  return `${COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${seguro}`;
+  return cookie(request, '', 0);
 }
 
-export async function sessaoValida(env, request) {
-  if (!configurado(env)) return false;
-  const cookies = request.headers.get('cookie') || '';
-  const m = cookies.match(new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]+)`));
+export async function sessaoValida(env, request, admin) {
+  admin = admin ?? (await lerAdmin(env));
+  if (!admin) return false;
+  const m = (request.headers.get('cookie') || '').match(new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]+)`));
   if (!m) return false;
   const partes = m[1].split('.');
   if (partes.length !== 3 || partes[0] !== 'v1') return false;
   const exp = Number(partes[1]);
   if (!Number.isFinite(exp) || exp < Date.now() / 1000) return false;
-  const esperado = await assinar(chaveSessao(env), `v1.${exp}`);
-  return iguais(esperado, partes[2], env.SESSION_SECRET);
+  return iguais(await hmac(chaveSessao(admin), `v1.${exp}`), partes[2]);
 }

@@ -13,10 +13,10 @@ Tudo roda na Cloudflare, no plano gratuito:
 |---|---|---|
 | Páginas do site | Cloudflare Pages | `public/` |
 | API e páginas de produto | Pages Functions | `functions/` |
-| Produtos, categorias, ajustes | D1 (banco SQLite) | `migrations/` |
-| Fotos | R2 | enviadas pelo painel, servidas em `/fotos/...` |
+| Produtos, categorias, ajustes, acesso ao painel | D1 (banco SQLite) | `migrations/` |
+| Fotos | KV | enviadas pelo painel, servidas em `/fotos/...` |
 
-Não há etapa de build: HTML, CSS e JavaScript puros.
+Não há etapa de build: HTML, CSS e JavaScript puros. O `wrangler.toml` já aponta para o banco D1 e o KV de produção.
 
 ## Rodar no computador
 
@@ -25,11 +25,15 @@ npm install
 ```
 
 ```bash
-printf 'ADMIN_USER=teste\nADMIN_PASSWORD=teste123\nSESSION_SECRET=um-texto-aleatorio-bem-longo\n' > .dev.vars
+npm run db:local
 ```
 
 ```bash
-npm run db:local
+node scripts/definir-acesso.mjs teste teste123 > /tmp/acesso.sql
+```
+
+```bash
+npx wrangler d1 execute sonhosemvelas --local --file /tmp/acesso.sql
 ```
 
 ```bash
@@ -38,59 +42,36 @@ npm run dev
 
 Abra http://localhost:8788 (site) e http://localhost:8788/admin (painel, usuário `teste`, senha `teste123`).
 
-## Publicar na Cloudflare (primeira vez)
+## Publicar
 
-1. Criar o banco e o bucket de fotos:
+O projeto Pages é ligado ao repositório do GitHub: cada push na branch de produção publica o site sozinho.
+Configuração do projeto na Cloudflare: sem comando de build, pasta de saída `public`.
 
-```bash
-npx wrangler d1 create sonhosemvelas
-```
-
-```bash
-npx wrangler r2 bucket create sonhosemvelas-fotos
-```
-
-2. Copiar o `database_id` que o primeiro comando mostrar para o `wrangler.toml`.
-3. Aplicar a estrutura do banco:
+Mudanças no banco (novas migrations) precisam ser aplicadas à parte:
 
 ```bash
 npm run db:remote
 ```
 
-4. Criar o projeto Pages e publicar:
+## Acesso ao painel
+
+Usuário e senha ficam na tabela `admin` do banco, com a senha guardada como hash PBKDF2 (nunca em texto puro).
+A própria dona da loja troca a senha em **Painel > Ajustes > Trocar senha**.
+
+Se esquecer a senha, gere um acesso novo e aplique no banco de produção:
 
 ```bash
-npx wrangler pages project create sonhosemvelas --production-branch main
+node scripts/definir-acesso.mjs Usuario NovaSenha > /tmp/acesso.sql
 ```
 
 ```bash
-npm run deploy
+npx wrangler d1 execute sonhosemvelas --remote --file /tmp/acesso.sql
 ```
-
-5. Definir os segredos do painel (o comando pede o valor):
-
-```bash
-npx wrangler pages secret put ADMIN_USER
-```
-
-```bash
-npx wrangler pages secret put ADMIN_PASSWORD
-```
-
-```bash
-npx wrangler pages secret put SESSION_SECRET
-```
-
-Depois de mudar segredos, publique de novo (`npm run deploy`) para valerem.
-
-## Trocar usuário ou senha do painel
-
-Rode `npx wrangler pages secret put ADMIN_USER` ou `npx wrangler pages secret put ADMIN_PASSWORD` com o novo valor e publique de novo. Todas as sessões abertas são encerradas automaticamente.
 
 ## Segurança
 
 - Login com usuário e senha (o usuário não diferencia maiúsculas de minúsculas).
-- O painel usa um cookie de sessão assinado (HttpOnly, SameSite=Strict, 30 dias).
-- Depois de 8 senhas erradas, o login fica bloqueado por 15 minutos para aquele IP.
+- O painel usa um cookie de sessão assinado (HttpOnly, SameSite=Strict, 30 dias). Trocar a senha encerra as sessões nos outros aparelhos.
+- Depois de 8 tentativas erradas, o login fica bloqueado por 15 minutos para aquele IP.
 - Toda alteração exige sessão válida e um cabeçalho próprio do painel.
 - O painel não aparece no Google (`noindex` e `robots.txt`).

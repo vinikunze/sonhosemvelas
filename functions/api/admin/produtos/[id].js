@@ -5,7 +5,7 @@ async function buscar(env, id) {
   return env.DB.prepare('SELECT * FROM products WHERE id = ?1').bind(id).first();
 }
 
-// PUT /api/admin/produtos/:id : edita produto (fotos removidas são apagadas do R2)
+// PUT /api/admin/produtos/:id : edita produto (fotos removidas são apagadas do armazenamento)
 export async function onRequestPut({ request, env, params }) {
   const atual = await buscar(env, params.id);
   if (!atual) return erro('Produto não encontrado', 404);

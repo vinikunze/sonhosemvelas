@@ -44,7 +44,7 @@ export async function lerProduto(request, db) {
 
 export async function apagarFotos(env, chaves) {
   const validas = chaves.filter((k) => CHAVE_FOTO.test(k));
-  if (validas.length) await env.FOTOS.delete(validas);
+  await Promise.all(validas.map((k) => env.FOTOS.delete(k)));
 }
 
 export { CHAVE_FOTO };

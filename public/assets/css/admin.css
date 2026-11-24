@@ -151,6 +151,7 @@ input[type="checkbox"].sw:checked::after, .interruptor input[type="checkbox"]:ch
 .cartao { background: var(--branco); border-radius: var(--raio); box-shadow: var(--sombra); padding: 18px; }
 .interruptores { padding: 4px 18px; margin-bottom: 18px; }
 .form { margin-bottom: 16px; }
+.form__titulo { font-size: 20px; margin-bottom: 14px; }
 .dica h2 { font-size: 20px; margin-bottom: 6px; }
 .dica p { color: var(--suave); font-size: 14.5px; }
 

@@ -533,6 +533,23 @@ $('#form-ajustes').addEventListener('submit', async (e) => {
   }
 });
 
+$('#form-senha').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.nova.value !== f.repetir.value) { toast('As duas senhas novas não são iguais', true); return; }
+  const botao = f.querySelector('button[type=submit]');
+  botao.disabled = true;
+  try {
+    await api('/api/admin/senha', { metodo: 'PUT', corpo: { atual: f.atual.value, nova: f.nova.value } });
+    f.reset();
+    toast('Senha trocada!');
+  } catch (err) {
+    toast(err.message, true);
+  } finally {
+    botao.disabled = false;
+  }
+});
+
 /* ---------------- Início ---------------- */
 
 (async () => {
