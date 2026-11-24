@@ -1,0 +1,14 @@
+{
+  "name": "sonhosemvelas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "db:local": "wrangler d1 migrations apply sonhosemvelas --local",
+    "db:remote": "wrangler d1 migrations apply sonhosemvelas --remote",
+    "deploy": "wrangler pages deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
+  }
+}

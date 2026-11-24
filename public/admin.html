@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Painel | Sonhos em Velas</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#FAF7F3">
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/admin.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+
+  <!-- Login -->
+  <section class="login" id="tela-login" hidden>
+    <form class="login__caixa" id="form-login" autocomplete="on">
+      <img src="/assets/img/logo.png" alt="" width="96" height="96">
+      <h1>Painel da loja</h1>
+      <p>Entre para cadastrar e editar os produtos do catálogo.</p>
+      <label class="campo">
+        <span>Senha</span>
+        <div class="senha">
+          <input type="password" id="senha" name="password" autocomplete="current-password" required>
+          <button type="button" class="senha__ver" id="ver-senha" aria-label="Mostrar senha">Mostrar</button>
+        </div>
+      </label>
+      <p class="erro" id="erro-login" role="alert"></p>
+      <button class="btn btn--bloco" type="submit">Entrar</button>
+      <a class="login__site" href="/">Voltar para o site</a>
+    </form>
+  </section>
+
+  <!-- Painel -->
+  <div class="app" id="app" hidden>
+    <header class="barra">
+      <a class="barra__marca" href="/" target="_blank" rel="noopener" title="Abrir o site">
+        <img src="/assets/img/logo.png" alt="" width="36" height="36">
+        <span>Sonhos em Velas</span>
+      </a>
+      <a class="barra__link" href="/" target="_blank" rel="noopener">Ver site ↗</a>
+      <button class="barra__link" type="button" id="sair">Sair</button>
+    </header>
+
+    <main class="conteudo">
+      <!-- Produtos -->
+      <section class="aba" id="aba-produtos" data-aba="produtos">
+        <div class="aba__cab">
+          <h1>Produtos</h1>
+          <p class="aba__info" id="contagem"></p>
+        </div>
+        <label class="busca">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <input type="search" id="busca" placeholder="Buscar produto" aria-label="Buscar produto">
+        </label>
+        <ul class="lista" id="lista-produtos"></ul>
+        <p class="vazio" id="sem-produtos" hidden>Nenhum produto ainda. Toque em <strong>Novo produto</strong> para começar.</p>
+        <button class="fab" type="button" id="novo-produto">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Novo produto
+        </button>
+      </section>
+
+      <!-- Categorias -->
+      <section class="aba" id="aba-categorias" data-aba="categorias" hidden>
+        <div class="aba__cab">
+          <h1>Categorias</h1>
+          <p class="aba__info">Agrupam os produtos no catálogo. Use as setas para mudar a ordem.</p>
+        </div>
+        <form class="linha-add" id="form-categoria">
+          <input type="text" id="nova-categoria" placeholder="Nome da nova categoria" maxlength="60" required aria-label="Nome da nova categoria">
+          <button class="btn" type="submit">Adicionar</button>
+        </form>
+        <ul class="lista lista--cats" id="lista-categorias"></ul>
+      </section>
+
+      <!-- Ajustes -->
+      <section class="aba" id="aba-ajustes" data-aba="ajustes" hidden>
+        <div class="aba__cab">
+          <h1>Ajustes do site</h1>
+        </div>
+        <form class="cartao form" id="form-ajustes">
+          <label class="campo">
+            <span>WhatsApp que recebe os pedidos</span>
+            <input type="tel" name="whatsapp" inputmode="numeric" placeholder="5566999999999" required>
+            <small>Com 55 + DDD + número, só números.</small>
+          </label>
+          <label class="campo">
+            <span>Instagram</span>
+            <input type="text" name="instagram" placeholder="sonhosemvelas_" autocapitalize="off">
+          </label>
+          <label class="campo">
+            <span>Aviso no topo do site</span>
+            <input type="text" name="announcement" maxlength="200" placeholder="Ex.: Encomendas de Natal até 15/12">
+            <small>Deixe vazio para não mostrar nenhum aviso.</small>
+          </label>
+          <label class="campo">
+            <span>Texto "Sobre nós"</span>
+            <textarea name="about" rows="6" maxlength="3000"></textarea>
+          </label>
+          <button class="btn btn--bloco" type="submit">Salvar ajustes</button>
+        </form>
+        <div class="cartao dica">
+          <h2>Dica</h2>
+          <p>Para mandar um produto para uma cliente, abra o produto no site e toque em <strong>Compartilhar</strong>. O link vai com a foto e o nome.</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="abas" aria-label="Seções do painel">
+      <button type="button" data-ir="produtos" aria-current="page">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7h8v12a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V7Zm4 0V4.5M12 4.5c1.2-1 1.2-2 0-2.5-1.2.5-1.2 1.5 0 2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Produtos
+      </button>
+      <button type="button" data-ir="categorias">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v6H4zM13 14h7v6h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Categorias
+      </button>
+      <button type="button" data-ir="ajustes">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Ajustes
+      </button>
+    </nav>
+  </div>
+
+  <!-- Editor de produto -->
+  <dialog class="editor" id="editor" aria-labelledby="editor-titulo">
+    <form id="form-produto" novalidate>
+      <header class="editor__topo">
+        <button type="button" class="editor__voltar" id="fechar-editor" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2 id="editor-titulo">Novo produto</h2>
+        <button type="submit" class="editor__salvar">Salvar</button>
+      </header>
+
+      <div class="editor__corpo">
+        <div class="campo">
+          <span>Fotos</span>
+          <ul class="fotos" id="fotos"></ul>
+          <small>A primeira foto é a capa. Use as setas para mudar a ordem. Até 12 fotos.</small>
+          <input type="file" id="input-fotos" accept="image/*" multiple hidden>
+        </div>
+
+        <label class="campo">
+          <span>Nome do produto *</span>
+          <input type="text" name="name" maxlength="120" required placeholder="Ex.: Vela Lavanda Serena">
+        </label>
+
+        <div class="duas">
+          <label class="campo">
+            <span>Preço (R$)</span>
+            <input type="text" name="price" inputmode="decimal" placeholder="49,90">
+            <small>Vazio = "sob consulta"</small>
+          </label>
+          <label class="campo">
+            <span>Categoria</span>
+            <select name="category_id" id="select-categoria"></select>
+          </label>
+        </div>
+
+        <div class="duas">
+          <label class="campo">
+            <span>Aroma</span>
+            <input type="text" name="aroma" maxlength="120" placeholder="Ex.: Lavanda">
+          </label>
+          <label class="campo">
+            <span>Tamanho / peso</span>
+            <input type="text" name="size" maxlength="120" placeholder="Ex.: 150 g">
+          </label>
+        </div>
+
+        <label class="campo">
+          <span>Descrição</span>
+          <textarea name="description" rows="5" maxlength="5000" placeholder="Conte sobre a vela: aroma, tempo de queima, para que ocasião combina..."></textarea>
+        </label>
+
+        <div class="cartao interruptores">
+          <label class="interruptor">
+            <span><strong>Disponível</strong><small>Desligue quando esgotar</small></span>
+            <input type="checkbox" name="available" checked>
+          </label>
+          <label class="interruptor">
+            <span><strong>Destaque</strong><small>Aparece primeiro no catálogo</small></span>
+            <input type="checkbox" name="featured">
+          </label>
+          <label class="interruptor">
+            <span><strong>Mostrar no site</strong><small>Desligue para esconder sem apagar</small></span>
+            <input type="checkbox" name="visible" checked>
+          </label>
+        </div>
+
+        <p class="erro" id="erro-produto" role="alert"></p>
+
+        <button type="submit" class="btn btn--bloco">Salvar produto</button>
+        <button type="button" class="btn btn--perigo btn--bloco" id="apagar-produto" hidden>Apagar produto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="aviso-toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="/assets/js/admin.js"></script>
+</body>
+</html>
