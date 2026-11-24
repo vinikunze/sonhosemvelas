@@ -26,10 +26,10 @@ export function normalizar(s) {
 
 // Ilustração usada quando o produto ainda não tem foto
 const TONS = [
-  ['#F2ECF8', '#D9C7EE', '#B497D6'],
+  ['#FDEEF3', '#FBCFE0', '#E97FAE'],
   ['#F7EFEA', '#EBD3C6', '#C99A86'],
   ['#EEF3EE', '#CFE0D0', '#93B496'],
-  ['#F6F0F4', '#E6CFDF', '#C08BAF'],
+  ['#FFF6E6', '#FFE0A8', '#E0A94A'],
 ];
 export function ilustracao(seed = '') {
   let h = 0;
@@ -41,7 +41,7 @@ export function ilustracao(seed = '') {
     <rect x="128" y="200" width="144" height="180" rx="20" fill="#fff" opacity=".6" stroke="${borda}" stroke-opacity=".5"/>
     <path d="M136 240 Q200 230 264 240 L264 362 Q264 372 254 372 L146 372 Q136 372 136 362 Z" fill="${cera}"/>
     <ellipse cx="200" cy="238" rx="64" ry="8" fill="#fff" opacity=".7"/>
-    <line x1="200" y1="238" x2="200" y2="220" stroke="#3A2A4D" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="200" y1="238" x2="200" y2="220" stroke="#3A1F2E" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M200 168 C212 186 214 200 207 210 C204 215 196 215 193 210 C186 200 188 186 200 168 Z" fill="#FFD58A"/>
     <text x="200" y="440" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="15" fill="${borda}" letter-spacing="2">FOTO EM BREVE</text>
   </svg>`;
