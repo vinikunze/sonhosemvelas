@@ -1,7 +1,7 @@
 // Página da vela: galeria, preço, quantidade, sacola, detalhes e sugestões
 import {
   montarCasca, aplicarAjustes, registrarProdutos, cardProduto, velaArte, fotoUrl, esc, preco, precoInfo, linkWpp, slug, ic,
-  sacola, abrirSacola, toast, revelar, ligarCarrossel, pareceAdmin,
+  sacola, abrirSacola, toast, revelar, ligarCarrossel, pareceAdmin, voarParaSacola, dividirTitulos,
 } from './comum.js';
 
 montarCasca({ topoSolido: true });
@@ -157,6 +157,8 @@ function render({ produto: p, settings: s, relacionados }) {
     definir(min);
 
     const adicionar = () => {
+      const trilho = document.getElementById('trilho');
+      voarParaSacola(trilho?.children[Math.round(trilho.scrollLeft / Math.max(1, trilho.clientWidth))] || trilho?.firstElementChild);
       sacola.adicionar(p, qtd);
       toast(`${qtd}x ${p.name} na sacola`, { rotulo: 'Ver sacola', fazer: abrirSacola });
     };
@@ -184,6 +186,7 @@ function render({ produto: p, settings: s, relacionados }) {
   });
 
   ligarGaleria(p.images.length);
+  dividirTitulos(main);
   ligarCarrossel(document.getElementById('rel-trilho'), document.getElementById('rel-ant'), document.getElementById('rel-prox'));
   revelar();
 

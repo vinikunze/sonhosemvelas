@@ -8,6 +8,21 @@ Loja online da Sonhos em Velas (velas aromáticas artesanais, Sinop, MT). Visual
 - **Sacola**: guarda os itens no aparelho da cliente; "Finalizar pelo WhatsApp" envia a lista, quantidades, total, nome, entrega/retirada e observação.
 - **Painel** (`/admin`): produtos (fotos, tipo, preços, parcelas, peso, aroma, queima, composição, momentos de uso, pedido mínimo), categorias, página inicial (destaques e fotos do site: capa, "nossa essência" e galeria) e ajustes.
 
+## Efeitos de movimento
+
+Ficam em `public/assets/js/efeitos.js` (com os estilos no fim de `site.css`):
+
+- Abertura com o logo e a chama acendendo (só na primeira visita da sessão, na página inicial).
+- Rolagem suave no computador (Lenis, em `public/assets/vendor/`); no celular fica a rolagem nativa.
+- Transição suave entre páginas (View Transitions), barra de progresso no topo.
+- Títulos que sobem palavra por palavra, fotos que se abrem com cortina arredondada e parallax.
+- Letreiro que acelera e muda de direção conforme a rolagem.
+- No computador: cards com inclinação 3D e brilho, botões magnéticos, cursor em anel ("Ver" sobre as fotos), carrosséis que dá para arrastar.
+- A vela da capa acompanha o mouse e a chama balança com o "vento".
+- Ao adicionar à sacola, a foto da vela voa até o ícone da sacola.
+
+Quem ativou "reduzir movimento" no celular ou no computador vê o site sem essas animações.
+
 ## Como funciona
 
 Tudo roda na Cloudflare, no plano gratuito:

@@ -1,4 +1,6 @@
 // Sonhos em Velas : peças compartilhadas pelo site (menu, sacola, cards, preços, ícones)
+import { iniciarEfeitos, voarParaSacola, dividirTitulos } from './efeitos.js';
+export { voarParaSacola, dividirTitulos };
 
 export const WPP_PADRAO = '5566996359962';
 let ajustes = { whatsapp: localStorage.getItem('sev_wpp') || WPP_PADRAO };
@@ -94,7 +96,7 @@ export function velaArte(seed = '', { texto = false, rotulo = true, fundo = true
     <ellipse cx="200" cy="266" rx="69" ry="9" fill="#fff" opacity=".55"/>
     ${rotulo ? `<rect x="158" y="312" width="84" height="46" rx="4" fill="#FBF5EE" opacity=".93"/><text x="200" y="332" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#7A2E4E">Sonhos</text><text x="200" y="348" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#7A2E4E">em Velas</text>` : ''}
     <line x1="200" y1="266" x2="200" y2="244" stroke="#4A3558" stroke-width="2.5" stroke-linecap="round"/>
-    <g class="chama"><path d="M200 172 C217 198 219 220 210 234 C205 242 195 242 190 234 C181 220 184 198 200 172 Z" fill="url(#${id}l)"/><path d="M200 206 C206 216 206 226 202 232 C200 235 198 235 197 232 C194 226 195 216 200 206 Z" fill="#FFFDF6"/></g>
+    <g class="vento"><g class="chama"><path d="M200 172 C217 198 219 220 210 234 C205 242 195 242 190 234 C181 220 184 198 200 172 Z" fill="url(#${id}l)"/><path d="M200 206 C206 216 206 226 202 232 C200 235 198 235 197 232 C194 226 195 216 200 206 Z" fill="#FFFDF6"/></g></g>
     <path d="M140 244 L140 390" stroke="rgba(255,255,255,.9)" stroke-width="3" stroke-linecap="round"/>
     ${texto ? '<text x="200" y="468" text-anchor="middle" font-family="Manrope, sans-serif" font-size="11" letter-spacing="4" fill="rgba(111,79,160,.45)">FOTO EM BREVE</text>' : ''}
   </svg>`;
@@ -416,6 +418,7 @@ export function montarCasca({ topoSolido = false } = {}) {
     e.preventDefault();
     const p = registro.get(b.dataset.add);
     if (!p) return;
+    voarParaSacola(b.closest('.produto-card')?.querySelector('.produto-card__foto img, .produto-card__foto svg'));
     sacola.adicionar(p, p.min_qty || 1);
     b.classList.add('feito');
     b.innerHTML = ic('check', '');
@@ -437,6 +440,7 @@ export function montarCasca({ topoSolido = false } = {}) {
 
   atualizarContador();
   ligarWpp();
+  iniciarEfeitos();
   revelar();
   const ano = document.getElementById('ano');
   if (ano) ano.textContent = new Date().getFullYear();

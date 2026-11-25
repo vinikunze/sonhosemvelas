@@ -1,6 +1,6 @@
 // Página inicial: apresentação da marca, coleções, destaques, momentos e galeria
 import {
-  montarCasca, aplicarAjustes, registrarProdutos, cardProduto, velaArte, fotoUrl, esc, slug, ic, revelar, ligarCarrossel,
+  montarCasca, aplicarAjustes, registrarProdutos, cardProduto, velaArte, fotoUrl, esc, slug, ic, revelar, ligarCarrossel, dividirTitulos,
 } from './comum.js';
 
 montarCasca();
@@ -9,7 +9,8 @@ const hero = document.getElementById('hero');
 
 /* ---------- Topo: título, brasas e parallax ---------- */
 
-requestAnimationFrame(() => setTimeout(() => hero.classList.add('pronto'), 80));
+// Se a abertura estiver na tela, o título entra logo depois dela
+requestAnimationFrame(() => setTimeout(() => hero.classList.add('pronto'), document.body.classList.contains('abrindo') ? 1150 : 80));
 
 if (!reduzir) {
   const brasas = document.getElementById('brasas');
@@ -95,7 +96,7 @@ function colecoes(categorias, produtos) {
     document.getElementById('vitrine-grade').innerHTML = lista.slice(0, 5).map((c, i) => {
       const comFoto = c.itens.find((p) => p.images.length);
       return `<a class="reveal" style="--d:${i * 0.07}s" href="/catalogo?categoria=${encodeURIComponent(c.slug)}">
-        ${comFoto ? `<img src="${fotoUrl(comFoto.images[0])}" alt="" loading="lazy">` : velaArte(c.slug + i)}
+        ${comFoto ? `<img src="${fotoUrl(comFoto.images[0])}" alt="" loading="lazy" data-paralaxe="0.07">` : velaArte(c.slug + i)}
         <div class="vitrine__texto"><div><small>${c.itens.length} ${c.itens.length === 1 ? 'opção' : 'opções'}</small><h3>${esc(c.name)}</h3></div><span class="circ-seta">${ic('seta', '')}</span></div>
       </a>`;
     }).join('');
@@ -107,6 +108,7 @@ function essencia(settings) {
   caixa.insertAdjacentHTML('afterbegin', settings.about_image
     ? `<img src="${fotoUrl(settings.about_image)}" alt="Ateliê da Sonhos em Velas" loading="lazy">`
     : velaArte('essencia'));
+  caixa.firstElementChild?.setAttribute('data-paralaxe', '0.1');
   if (settings.about) document.getElementById('sobre-texto').textContent = settings.about;
 }
 
@@ -114,7 +116,11 @@ function destaques(produtos, settings) {
   const titulo = settings.home_title || 'Destaques da semana';
   const partes = titulo.split(' ');
   const corte = partes.length <= 3 ? 1 : Math.ceil(partes.length / 2);
-  document.getElementById('dest-titulo').innerHTML = `${esc(partes.slice(0, corte).join(' '))}<br><em>${esc(partes.slice(corte).join(' ') || '')}</em>`;
+  const tituloEl = document.getElementById('dest-titulo');
+  tituloEl.innerHTML = `${esc(partes.slice(0, corte).join(' '))}<br><em>${esc(partes.slice(corte).join(' ') || '')}</em>`;
+  delete tituloEl.dataset.dividido;
+  tituloEl.classList.remove('dividido', 'is-visivel');
+  dividirTitulos(document.getElementById('destaques'));
   const sub = document.getElementById('dest-sub');
   sub.textContent = settings.home_subtitle || '';
   sub.hidden = !settings.home_subtitle;
@@ -157,7 +163,7 @@ function galeria(settings) {
   if (!fotos.length) return;
   document.getElementById('galeria').hidden = false;
   document.getElementById('galeria-trilho').innerHTML = fotos
-    .map((k, i) => `<figure class="reveal" style="--d:${Math.min(i, 4) * 0.06}s"><img src="${fotoUrl(k)}" alt="" loading="lazy"><figcaption>0${i + 1}</figcaption></figure>`)
+    .map((k, i) => `<figure class="reveal" style="--d:${Math.min(i, 4) * 0.06}s"><img src="${fotoUrl(k)}" alt="" loading="lazy" data-paralaxe="0.06"><figcaption>0${i + 1}</figcaption></figure>`)
     .join('');
 }
 
